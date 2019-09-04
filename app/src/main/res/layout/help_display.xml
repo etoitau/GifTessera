@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/helpLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorWhite"
+    android:onClick="dismissHelp">
+
+    <ImageButton
+        android:id="@+id/prevButtonHelp"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:contentDescription="@string/prev_frame_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:drawable/ic_media_previous" />
+
+
+    <ImageButton
+        android:id="@+id/nextButtonHelp"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:contentDescription="@string/next_frame_button"
+        app:layout_constraintStart_toStartOf="@+id/prevButtonHelp"
+        app:layout_constraintTop_toBottomOf="@+id/prevButtonHelp"
+        app:srcCompat="@android:drawable/ic_media_next" />
+
+    <ImageButton
+        android:id="@+id/addButtonHelp"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:contentDescription="@string/add_frame_button"
+        app:layout_constraintStart_toStartOf="@+id/deleteButtonHelp"
+        app:layout_constraintTop_toBottomOf="@+id/deleteButtonHelp"
+        app:srcCompat="@android:drawable/ic_input_add" />
+
+    <ImageButton
+        android:id="@+id/deleteButtonHelp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:contentDescription="@string/del_frame_button"
+        app:layout_constraintStart_toStartOf="@+id/playButtonHelp"
+        app:layout_constraintTop_toBottomOf="@+id/imageButton"
+        app:srcCompat="@android:drawable/ic_delete" />
+
+    <ImageButton
+        android:id="@+id/playButtonHelp"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:contentDescription="@string/play_button"
+        app:layout_constraintStart_toStartOf="@+id/nextButtonHelp"
+        app:layout_constraintTop_toBottomOf="@+id/nextButtonHelp"
+        app:srcCompat="@android:drawable/ic_media_play" />
+
+    <ImageButton
+        android:id="@+id/imageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:contentDescription="@string/play_button"
+        app:layout_constraintStart_toEndOf="@+id/playButtonHelp"
+        app:layout_constraintTop_toBottomOf="@+id/playButtonHelp"
+        app:srcCompat="@android:drawable/ic_menu_close_clear_cancel" />
+
+    <ImageButton
+        android:id="@+id/peekButtonHelp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="8dp"
+        android:contentDescription="@string/peek_button"
+        android:scaleType="fitXY"
+        app:layout_constraintStart_toStartOf="@+id/addButtonHelp"
+        app:layout_constraintTop_toBottomOf="@+id/addButtonHelp"
+        app:srcCompat="@drawable/flip_icon_crop" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/prev_help_entry"
+        app:layout_constraintBottom_toBottomOf="@+id/prevButtonHelp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/prevButtonHelp"
+        app:layout_constraintTop_toTopOf="@+id/prevButtonHelp" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/next_help_entry"
+        app:layout_constraintBottom_toBottomOf="@+id/nextButtonHelp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/nextButtonHelp"
+        app:layout_constraintTop_toTopOf="@+id/nextButtonHelp" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/play_help_entry"
+        app:layout_constraintBottom_toBottomOf="@+id/playButtonHelp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/playButtonHelp"
+        app:layout_constraintTop_toTopOf="@+id/playButtonHelp" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/stop_help_entry"
+        app:layout_constraintBottom_toBottomOf="@+id/imageButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imageButton"
+        app:layout_constraintTop_toTopOf="@+id/imageButton" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/delete_help_entry"
+        app:layout_constraintBottom_toBottomOf="@+id/deleteButtonHelp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/deleteButtonHelp"
+        app:layout_constraintTop_toTopOf="@+id/deleteButtonHelp" />
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/add_help_entry"
+        app:layout_constraintBottom_toBottomOf="@+id/addButtonHelp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/addButtonHelp"
+        app:layout_constraintTop_toTopOf="@+id/addButtonHelp" />
+
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/peek_help_entry"
+        app:layout_constraintBottom_toBottomOf="@+id/peekButtonHelp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/peekButtonHelp"
+        app:layout_constraintTop_toTopOf="@+id/peekButtonHelp" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:onClick="dismissHelp"
+        android:text="@string/back_to_giftessera"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

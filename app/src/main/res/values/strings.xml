@@ -1,0 +1,80 @@
+<resources>
+    <string name="app_name">GifTessera</string>
+
+<!--    Button names-->
+    <string name="peek_button">Peek Button</string>
+    <string name="next_frame_button">Next Frame Button</string>
+    <string name="prev_frame_button">Previous Frame Button</string>
+    <string name="play_button">Play Button</string>
+    <string name="add_frame_button">Add or Insert Frame Button</string>
+    <string name="del_frame_button">Delete Frame Button</string>
+    <string name="red_button">Red Button</string>
+    <string name="orange_button">Orange Button</string>
+    <string name="yellow_button">Yellow Button</string>
+    <string name="green_button">Green Button</string>
+    <string name="blue_button">Blue Button</string>
+    <string name="purple_button">Purple Button</string>
+    <string name="white_button">White Button</string>
+    <string name="gray_button">Gray Button</string>
+    <string name="black_button">Black Button</string>
+
+<!--    Alert text-->
+    <string name="alert_delete_frame_title">Confirm Delete Current Frame</string>
+    <string name="alert_delete_frame_message">Are you sure you want to delete this frame?</string>
+    <string name="no_never_mind">No, never mind</string>
+    <string name="yes_delete">Yes, delete</string>
+    <string name="alert_clear_session_title">Confirm Clear Session</string>
+    <string name="alert_clear_session_message">Are you sure you want to delete whole animation?</string>
+    <string name="alert_delete_save_title">Confirm Delete Save File</string>
+    <string name="alert_delete_save_message">Are you sure you want to delete </string>
+    <string name="yes_save_over">Yes, save over</string>
+    <string name="alert_overwrite_save_title">Confirm Overwrite Save</string>
+    <string name="alert_overwrite_save_message">Are you sure you want to save over </string>
+    <string name="alert_load_save_title">Confirm Load File</string>
+    <string name="alert_load_save_message">Are you sure you want to load %s? Any current unsaved work will be lost.</string>
+    <string name="yes_load">Yes, load file</string>
+
+<!--    Menu items-->
+    <string name="save">Save</string>
+    <string name="save_as">Save As</string>
+    <string name="load">Load</string>
+    <string name="clear">Clear</string>
+    <string name="export">Export Gif</string>
+    <string name="invalid_selection">Invalid Selection</string>
+
+<!--    Misc-->
+    <string name="frame">Frame</string>
+    <string name="temp">temp</string>
+
+<!--    Files Activity-->
+    <string name="new_save">New Save</string>
+    <string name="file_name">File name</string>
+    <string name="overwrite_past_save">Overwrite Past Save</string>
+    <string name="load_past_save">Load Save File</string>
+    <string name="file_delete_button">File delete button</string>
+    <string name="no_files_found">No previous saves found</string>
+    <string name="missing_name">Please enter file name</string>
+    <string name="existing_name">Name taken, please enter unique name, or tap the file you want to overwrite</string>
+
+<!--    Main Activity-->
+    <string name="frame_added_after">Frame added after %d</string>
+    <string name="error_saving">Error Saving</string>
+    <string name="saved_as">Saved as</string>
+    <string name="fs_not_available">File system not available</string>
+    <string name="saving_to_gif">Saving %s to gif…</string>
+    <string name="save_before_export">Must save before exporting</string>
+    <string name="finished_saving_gif">Finished saving %s to gif</string>
+    <string name="error_saving_gif">Error saving %s to gif</string>
+
+<!--    Help text-->
+    <string name="prev_help_entry">Move to previous frame.</string>
+    <string name="next_help_entry">Move to next frame.</string>
+    <string name="play_help_entry">Play animation from start. When running, turns into…</string>
+    <string name="stop_help_entry">Stop animation.</string>
+    <string name="delete_help_entry">Delete current frame.</string>
+    <string name="add_help_entry">Insert new frame after current. New frame will be copy of current.</string>
+    <string name="peek_help_entry">Peek previous. Shows previous frame as long as it is held down.</string>
+    <string name="back_to_giftessera">Back to GifTessera</string>
+
+
+</resources>
