@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.etoitau.giftessera.helpers.DBHelper
 import com.etoitau.giftessera.domain.DatabaseFile
+import com.etoitau.giftessera.helpers.EnterListener
 import com.etoitau.giftessera.helpers.FilesAdapter
 import kotlinx.android.synthetic.main.activity_files.*
 
@@ -67,6 +68,10 @@ class FilesActivity : AppCompatActivity() {
         // show them in recyclerview
         inflateRecyclerView()
 
+        // set enter key listener on file name
+        if (mode == FilesAdapter.SAVING) {
+            fileNameField.setOnKeyListener(EnterListener(this))
+        }
     }
 
     /**
@@ -216,7 +221,7 @@ class FilesActivity : AppCompatActivity() {
      * If from Load, this is file info from database
      */
     fun returnToMainWithIntent(databaseFile: DatabaseFile) {
-        var intent = Intent(this, MainActivity::class.java)
+        val intent = Intent(this, MainActivity::class.java)
         intent.putExtra("id", databaseFile.id)
         intent.putExtra("name", databaseFile.name)
         intent.putExtra("file", databaseFile.blob)
