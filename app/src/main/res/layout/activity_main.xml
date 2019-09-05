@@ -7,6 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+<!--    Bottom row of buttons from right to left-->
     <ImageButton
         android:id="@+id/peekButton"
         android:layout_width="50dp"
@@ -18,7 +19,7 @@
         app:srcCompat="@drawable/flip_icon_crop" />
 
     <!--    Color Buttons-->
-    <com.etoitau.giftessera.domain.PalatteButton
+    <com.etoitau.giftessera.domain.PaletteButton
         android:id="@+id/whiteButton"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -34,7 +35,7 @@
         app:layout_constraintStart_toEndOf="@+id/grayButton"
         app:layout_constraintTop_toTopOf="@+id/peekButton" />
 
-    <com.etoitau.giftessera.domain.PalatteButton
+    <com.etoitau.giftessera.domain.PaletteButton
         android:id="@+id/grayButton"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -49,7 +50,7 @@
         app:layout_constraintStart_toEndOf="@+id/blackButton"
         app:layout_constraintTop_toTopOf="@+id/whiteButton" />
 
-    <com.etoitau.giftessera.domain.PalatteButton
+    <com.etoitau.giftessera.domain.PaletteButton
         android:id="@+id/blackButton"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -64,7 +65,7 @@
         app:layout_constraintStart_toEndOf="@+id/purpleButton"
         app:layout_constraintTop_toTopOf="@+id/grayButton" />
 
-    <com.etoitau.giftessera.domain.PalatteButton
+    <com.etoitau.giftessera.domain.PaletteButton
         android:id="@+id/purpleButton"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -78,7 +79,7 @@
         app:layout_constraintStart_toEndOf="@+id/blueButton"
         app:layout_constraintTop_toTopOf="@+id/blackButton" />
 
-    <com.etoitau.giftessera.domain.PalatteButton
+    <com.etoitau.giftessera.domain.PaletteButton
         android:id="@+id/blueButton"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -93,7 +94,7 @@
         app:layout_constraintStart_toEndOf="@+id/greenButton"
         app:layout_constraintTop_toTopOf="@+id/purpleButton" />
 
-    <com.etoitau.giftessera.domain.PalatteButton
+    <com.etoitau.giftessera.domain.PaletteButton
         android:id="@+id/greenButton"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -108,7 +109,7 @@
         app:layout_constraintStart_toEndOf="@+id/yellowButton"
         app:layout_constraintTop_toTopOf="@+id/blueButton" />
 
-    <com.etoitau.giftessera.domain.PalatteButton
+    <com.etoitau.giftessera.domain.PaletteButton
         android:id="@+id/yellowButton"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -123,7 +124,7 @@
         app:layout_constraintStart_toEndOf="@+id/orangeButton"
         app:layout_constraintTop_toTopOf="@+id/greenButton" />
 
-    <com.etoitau.giftessera.domain.PalatteButton
+    <com.etoitau.giftessera.domain.PaletteButton
         android:id="@+id/orangeButton"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -138,7 +139,7 @@
         app:layout_constraintStart_toEndOf="@+id/redButton"
         app:layout_constraintTop_toTopOf="@+id/yellowButton" />
 
-    <com.etoitau.giftessera.domain.PalatteButton
+    <com.etoitau.giftessera.domain.PaletteButton
         android:id="@+id/redButton"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -153,6 +154,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/orangeButton" />
 
+<!--    The DrawingBoard that shows/edits an animation frame-->
     <com.etoitau.giftessera.domain.DrawingBoard
         android:id="@+id/drawingBoard"
         android:layout_width="0dp"
@@ -164,6 +166,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/prevButton" />
+
+<!--    Top row from left corner-->
+    <ImageButton
+        android:id="@+id/prevButton"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:contentDescription="@string/prev_frame_button"
+        android:onClick="clickPrev"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:drawable/ic_media_previous" />
 
     <ImageButton
         android:id="@+id/nextButton"
@@ -177,15 +190,17 @@
         app:srcCompat="@android:drawable/ic_media_next" />
 
     <ImageButton
-        android:id="@+id/prevButton"
+        android:id="@+id/playButton"
         android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:contentDescription="@string/prev_frame_button"
-        android:onClick="clickPrev"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_height="0dp"
+        android:contentDescription="@string/play_button"
+        android:onClick="clickPlay"
+        app:layout_constraintBottom_toBottomOf="@+id/prevButton"
+        app:layout_constraintStart_toEndOf="@+id/nextButton"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/ic_media_previous" />
+        app:srcCompat="@android:drawable/ic_media_play" />
 
+<!--    Top row from right corner-->
     <ImageButton
         android:id="@+id/addButton"
         android:layout_width="wrap_content"
@@ -209,17 +224,8 @@
         app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@android:drawable/ic_delete" />
 
-    <ImageButton
-        android:id="@+id/playButton"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:contentDescription="@string/play_button"
-        android:onClick="clickPlay"
-        app:layout_constraintBottom_toBottomOf="@+id/prevButton"
-        app:layout_constraintStart_toEndOf="@+id/nextButton"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/ic_media_play" />
 
+<!--    Help display that pops up when selected from menu-->
     <include
         android:id="@+id/helpDisplay"
         layout="@layout/help_display"

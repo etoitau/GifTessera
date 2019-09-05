@@ -17,15 +17,17 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?):
         DATABASE_VERSION
     ) {
 
+    // table and column names for reference
     companion object {
-        private val DATABASE_VERSION = 3
-        private val DATABASE_NAME = "giftesseraFiles.db"
-        val TABLE_NAME = "filmstrip"
-        val COLUMN_ID = "_id"
-        val COLUMN_NAME = "filename"
-        val COLUMN_FILE = "file"
+        private const val DATABASE_VERSION = 3
+        private const val DATABASE_NAME = "giftesseraFiles.db"
+        private const val TABLE_NAME = "filmstrip"
+        const val COLUMN_ID = "_id"
+        const val COLUMN_NAME = "filename"
+        const val COLUMN_FILE = "file"
     }
 
+    // create table
     override fun onCreate(db: SQLiteDatabase) {
         val CREATE_PRODUCTS_TABLE = ("CREATE TABLE " + TABLE_NAME +
                 "(" + COLUMN_ID + " INTEGER PRIMARY KEY, " +
@@ -34,11 +36,14 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?):
         db.execSQL(CREATE_PRODUCTS_TABLE)
     }
 
+    // upgrade is just drop previous table and create new one
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         db.execSQL("DROP TABLE IF EXISTS $TABLE_NAME")
         onCreate(db)
     }
 
+    // add row from DatabaseFile object
+    // return primary key for later use in updating entry
     fun addFile(databaseFile: DatabaseFile): Int {
         val values = ContentValues()
         values.put(COLUMN_NAME, databaseFile.name)
@@ -50,11 +55,14 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?):
         return id
     }
 
+    // get table contents
     fun getFiles(): Cursor? {
         val db = this.readableDatabase
         return db.rawQuery("SELECT * FROM $TABLE_NAME", null)
     }
 
+    // delete table entry by name
+    // note we check on new file creation in FilesActivity that name does not already exist in database
     fun deleteFile(databaseFile: DatabaseFile) {
         val db = this.writableDatabase
         val selection = COLUMN_NAME + " LIKE ?"
@@ -62,6 +70,7 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?):
         db.close()
     }
 
+    // update table entry by primary key
     fun updateFile(databaseFile: DatabaseFile) {
         val db = this.writableDatabase
         val values = ContentValues()

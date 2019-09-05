@@ -14,19 +14,28 @@ import com.etoitau.giftessera.domain.DatabaseFile
 import com.etoitau.giftessera.helpers.FilesAdapter
 import kotlinx.android.synthetic.main.activity_files.*
 
+/**
+ * Here user can see all current saved projects
+ * Can be opened in two modes:
+ * SAVING - create new save file or save over existing
+ * LOADING - load existing save file for editing/viewing
+ */
 class FilesActivity : AppCompatActivity() {
+    // adapter for showing saved files in recyclerview
     lateinit var filesAdapter: FilesAdapter
-    val fileList = mutableListOf<DatabaseFile>()
-    lateinit var rvFiles: RecyclerView
+    // list of found save files
+    private val fileList = mutableListOf<DatabaseFile>()
+    // recyclerview for viewing files
+    private lateinit var rvFiles: RecyclerView
+    // FilesActivity mode, intent from MainActivity indicates what mode should be
     var mode: Int = FilesAdapter.SAVING
+    // file data as bytearray provided by intent from MainActivity if appropriate
     var toSave: ByteArray? = null
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_files)
-
 
         // get mode from intent
         if (intent.extras == null) {
@@ -35,12 +44,14 @@ class FilesActivity : AppCompatActivity() {
             mode = intent.extras!!.getInt("mode")
         }
 
+        // if LOADING mode, don't need UI for new save, and title should update
         if (mode == FilesAdapter.LOADING) {
             newSaveTitle.visibility = View.GONE
             fileNameField.visibility = View.GONE
             saveButton.visibility = View.GONE
             pastSaveTitle.text = resources.getString(R.string.load_past_save)
         } else {
+            // if SAVING get file to save from intent
             toSave = intent.extras!!.getByteArray("file")
         }
 
@@ -50,8 +61,10 @@ class FilesActivity : AppCompatActivity() {
         rvFiles.addItemDecoration(itemDecoration)
         rvFiles.setLayoutManager(LinearLayoutManager(this))
 
+        // get files from database
         getFiles()
 
+        // show them in recyclerview
         inflateRecyclerView()
 
     }
@@ -67,6 +80,7 @@ class FilesActivity : AppCompatActivity() {
             fileMessageView.visibility = View.VISIBLE
         } else {
             try {
+                // fill fileList with all files found in database
                 fileList.clear()
                 cursor.moveToFirst()
                 var id = cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_ID))
@@ -99,6 +113,12 @@ class FilesActivity : AppCompatActivity() {
         rvFiles.adapter = filesAdapter
     }
 
+    /**
+     * If user clicks save button
+     * - check they entered a name
+     * - check name isn't already used
+     * then save to database
+     */
     fun clickSave(view: View) {
         val enteredName: String? = fileNameField.text.toString()
         if (enteredName == null || enteredName.isEmpty()) {
@@ -112,6 +132,10 @@ class FilesActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * New save to database, not overwriting existing
+     * Note we get id for created database entry so we can update file later if desired
+     */
     fun newSaveToDB(name: String, byteArray: ByteArray) {
         val dbHelper = DBHelper(this, null)
         val databaseFile = DatabaseFile(null, name, byteArray)
@@ -119,6 +143,10 @@ class FilesActivity : AppCompatActivity() {
         returnToMainWithIntent(DatabaseFile(id, name, byteArray))
     }
 
+    /**
+     * If user clicks one of the delete Xs, confirm they want to delete file from database,
+     * then delete
+     */
     fun deleteFileAlert(databaseFile: DatabaseFile) {
         // delete save confirmation
         val builder = android.app.AlertDialog.Builder(this)
@@ -126,8 +154,10 @@ class FilesActivity : AppCompatActivity() {
         val message: String = resources.getString(R.string.alert_delete_save_message) + " ${databaseFile.name}?"
         builder.setMessage(message)
         builder.setPositiveButton(R.string.yes_delete) {dialog, which ->
+            // use helper to delete from database
             val dbHelper = DBHelper(this, null)
             dbHelper.deleteFile(databaseFile)
+            // update file list and recyclerview
             val index = fileList.indexOf(databaseFile)
             fileList.removeAt(index)
             filesAdapter.notifyItemRemoved(index)
@@ -138,6 +168,11 @@ class FilesActivity : AppCompatActivity() {
         builder.create().show()
     }
 
+    /**
+     * If user clicks on an existing file in save mode,
+     * confirm they want to overwrite that file,
+     * then do so
+     */
     fun overwriteFileAlert(databaseFile: DatabaseFile) {
         // overwrite save confirmation
         val builder = android.app.AlertDialog.Builder(this)
@@ -145,6 +180,7 @@ class FilesActivity : AppCompatActivity() {
         val message: String = resources.getString(R.string.alert_overwrite_save_message) + " ${databaseFile.name}?"
         builder.setMessage(message)
         builder.setPositiveButton(R.string.yes_save_over) {dialog, which ->
+            // use helper to update file in database
             val dbHelper = DBHelper(this, null)
             dbHelper.updateFile(databaseFile)
             returnToMainWithIntent(databaseFile)
@@ -155,6 +191,11 @@ class FilesActivity : AppCompatActivity() {
         builder.create().show()
     }
 
+    /**
+     * if user clicks on one of the existing files in recyclerview,
+     * confirm they want to load it and lose current project,
+     * then do so
+     */
     fun loadFileAlert(databaseFile: DatabaseFile) {
         val builder = android.app.AlertDialog.Builder(this)
         builder.setTitle(R.string.alert_load_save_title)
@@ -169,16 +210,17 @@ class FilesActivity : AppCompatActivity() {
         builder.create().show()
     }
 
+    /**
+     * Send file back to MainActivity so it can update DrawSession
+     * If from Save As, this is same info sent here + database id
+     * If from Load, this is file info from database
+     */
     fun returnToMainWithIntent(databaseFile: DatabaseFile) {
-        var intent: Intent = Intent(this, MainActivity::class.java)
+        var intent = Intent(this, MainActivity::class.java)
         intent.putExtra("id", databaseFile.id)
         intent.putExtra("name", databaseFile.name)
         intent.putExtra("file", databaseFile.blob)
         setResult(1, intent)
         finish()
     }
-
-
-
-
 }

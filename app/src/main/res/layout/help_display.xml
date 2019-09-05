@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<!--Help Display - a legend of the unlabeled buttons in the app-->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/helpLayout"
@@ -7,6 +9,7 @@
     android:background="@color/colorWhite"
     android:onClick="dismissHelp">
 
+<!--    The buttons-->
     <ImageButton
         android:id="@+id/prevButtonHelp"
         android:layout_width="wrap_content"
@@ -81,6 +84,7 @@
         app:layout_constraintTop_toBottomOf="@+id/addButtonHelp"
         app:srcCompat="@drawable/flip_icon_crop" />
 
+<!--    Descriptions-->
     <TextView
         android:id="@+id/textView"
         android:layout_width="0dp"
@@ -165,6 +169,7 @@
         app:layout_constraintStart_toEndOf="@+id/peekButtonHelp"
         app:layout_constraintTop_toTopOf="@+id/peekButtonHelp" />
 
+<!--    Button to dismiss help display. Can also click anywhere else-->
     <Button
         android:id="@+id/button"
         android:layout_width="wrap_content"

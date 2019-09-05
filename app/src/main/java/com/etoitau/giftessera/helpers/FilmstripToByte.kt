@@ -32,7 +32,7 @@ fun toByte(list: MutableList<Bitmap>): ByteArray? {
     // for each frame, log changes relative to previous frame
     for (i in 0 until list.size) {
         // get the differences for this frame
-        var arrayChanges = diffFrame(start, list[i])
+        val arrayChanges = diffFrame(start, list[i])
         // update start for next frame
         start = list[i]
         // get two bytes representing number of changed pixels
@@ -49,7 +49,7 @@ fun toByte(list: MutableList<Bitmap>): ByteArray? {
  * return a white bitmap of given size
  */
 fun whiteBitmap(width: Int, height: Int): Bitmap {
-    var output = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+    val output = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
     for (i in 0 until width) {
         for (j in 0 until height) {
             output.setPixel(i, j, ColorVal.WHITE.value)
@@ -62,11 +62,11 @@ fun whiteBitmap(width: Int, height: Int): Bitmap {
  * return what pixels to paint and what color to turn start bitmap into end
  */
 fun diffFrame(start: Bitmap, end: Bitmap): MutableList<Byte> {
-    var output = mutableListOf<Byte>()
+    val output = mutableListOf<Byte>()
     for (i in 0 until start.width) {
         for (j in 0 until start.height) {
-            var fromStart = start.get(i, j)
-            var fromEnd = end.get(i, j)
+            val fromStart = start.get(i, j)
+            val fromEnd = end.get(i, j)
             if (!fromStart.equals(fromEnd)) {
                 output.add(i.toByte())                      // x
                 output.add(j.toByte())                      // y
@@ -122,9 +122,9 @@ fun toFilmstrip(bytes: ByteArray): MutableList<Bitmap> {
         // make a copy of starting point
         val frame = Bitmap.createBitmap(start)
         // indexes of bytes holding number of changes
-        var indexNChanges = listOf(++index, ++index)
+        val indexNChanges = listOf(++index, ++index)
         // get those two bytes as array
-        var twoByte = bytes.sliceArray(indexNChanges)
+        val twoByte = bytes.sliceArray(indexNChanges)
         // get number of changes
         val nToPaint = byteArrayToInt(twoByte)
         // each pixel to paint for this frame

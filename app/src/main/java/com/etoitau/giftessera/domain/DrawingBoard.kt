@@ -15,36 +15,38 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.round
 
-
+/**
+ * View element that shows and allows editing of current animation frame
+ */
 class DrawingBoard @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) :
     View(context, attrs) {
 
-    var color: ColorVal = BLACK
-    var editable: Boolean = true
-    var xScale: Int = 1
+    var editable: Boolean = true            // if animation is being shown, don't want to allow editing
+
+    var xScale: Int = 1                     // how many screen pixels should a drawing pixel take
     var yScale: Int = 1
+    var dpi = 1                             // screen dpi to determine scale
 
-    var dpi = 1
+    private val SQ_PER_IN: Int = 4          // how big do we want drawing pixels to be on screen
+    private val MIN_SQUARES: Int = 8        // at least this many squares each way on the screen
 
-    val SQ_PER_IN: Int = 4
-    val GRIDLINE_T: Int = 2
+    val GRIDLINE_T: Int = 2                 // thickness of gridlines in pixels
 
-    private var srcBitmap: Bitmap? = null
+    private var srcBitmap: Bitmap? = null   // bitmap file being displayed/edited here
 
-
-    var dwgBitmap: Bitmap? = null
-    var drawingCanvas: Canvas? = null
-    var paint: Paint = Paint()
+    var paint: Paint = Paint()              // paint object for drawing bitmap
+    var color: ColorVal = BLACK             // current paint color, start with black
 
 
     fun init(width: Int, height: Int, dpi: Int) {
+        // set up drawing board size and number of drawing pixels, etc
         this.dpi = dpi
-        var nWide = max(8, width / dpi * SQ_PER_IN)
-        var nHigh = max(8, height / dpi * SQ_PER_IN)
+        val nWide = max(MIN_SQUARES, width / dpi * SQ_PER_IN)
+        val nHigh = max(MIN_SQUARES, height / dpi * SQ_PER_IN)
         xScale = width / nWide
         yScale = height / nHigh
 
-//        srcBitmap = Bitmap.createBitmap(nWide, nHigh, Bitmap.Config.ARGB_8888)
+        //start with an all-white board
         srcBitmap = whiteBitmap(nWide, nHigh)
     }
 
@@ -57,15 +59,19 @@ class DrawingBoard @JvmOverloads constructor(context: Context, attrs: AttributeS
         return srcBitmap!!
     }
 
+    /**
+     * Render the source bitmap to the screen
+     * adds some gridlines as a drawing aide
+     */
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
 
         canvas!!.save()
-//        drawingCanvas!!.drawColor(ColorVal.WHITE.value)
-        dwgBitmap = Bitmap.createScaledBitmap(srcBitmap!!, srcBitmap!!.width * xScale, srcBitmap!!.height * yScale, false)
-        drawingCanvas = Canvas(dwgBitmap!!)
-        drawingCanvas!!.drawBitmap(dwgBitmap!!, 0f, 0f, paint)
-
+        val dwgBitmap = Bitmap.createScaledBitmap(srcBitmap!!,
+            srcBitmap!!.width * xScale,
+            srcBitmap!!.height * yScale, false)
+        val drawingCanvas = Canvas(dwgBitmap!!)
+        drawingCanvas.drawBitmap(dwgBitmap, 0f, 0f, paint)
 
         // draw gridlines
         paint.color = ColorVal.LIGHT_GRAY.value
@@ -74,20 +80,23 @@ class DrawingBoard @JvmOverloads constructor(context: Context, attrs: AttributeS
         paint.maskFilter = null
         // vert lines
         for (i in 1 until srcBitmap!!.width) {
-            drawingCanvas!!.drawLine(i.toFloat() * xScale, 0f,
+            drawingCanvas.drawLine(i.toFloat() * xScale, 0f,
                 i.toFloat() * xScale, srcBitmap!!.height * yScale.toFloat(), paint)
         }
         // horiz lines
         for (i in 1 until srcBitmap!!.height) {
-            drawingCanvas!!.drawLine(0f, i.toFloat() * yScale,
+            drawingCanvas.drawLine(0f, i.toFloat() * yScale,
                 srcBitmap!!.width * xScale.toFloat(), i.toFloat() * yScale,
                 paint)
         }
 
-        canvas.drawBitmap(dwgBitmap!!, 0f, 0f, paint)
+        canvas.drawBitmap(dwgBitmap, 0f, 0f, paint)
         canvas.restore()
     }
 
+    /**
+     * when user touches the board, paint touched squares
+     */
     override fun onTouchEvent(event: MotionEvent): Boolean {
         if (!editable)
             return false
@@ -111,6 +120,10 @@ class DrawingBoard @JvmOverloads constructor(context: Context, attrs: AttributeS
         return true
     }
 
+    /**
+     * take screen position from onTouchEvent, convert to source bitmap pixel location,
+     * and paint that pixel with current paint color
+     */
     fun paintSquare(x: Float, y: Float) {
         val downX = min(max(0, floor(x / xScale).toInt()), srcBitmap!!.width - 1)
         val downY = min(max(0, floor(y / yScale).toInt()), srcBitmap!!.height - 1)
@@ -123,6 +136,4 @@ class DrawingBoard @JvmOverloads constructor(context: Context, attrs: AttributeS
         srcBitmap = whiteBitmap(w, h)
         invalidate()
     }
-
-
 }

@@ -75,6 +75,6 @@
     <string name="add_help_entry">Insert new frame after current. New frame will be copy of current.</string>
     <string name="peek_help_entry">Peek previous. Shows previous frame as long as it is held down.</string>
     <string name="back_to_giftessera">Back to GifTessera</string>
-
+    <string name="help">Help</string>
 
 </resources>

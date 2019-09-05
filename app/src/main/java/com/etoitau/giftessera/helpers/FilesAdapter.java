@@ -23,7 +23,7 @@ import java.util.List;
  */
 public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.ViewHolder> {
     private List<DatabaseFile> files; // the data model
-    FilesActivity filesActivity; // the calling activity
+    private FilesActivity filesActivity; // the calling activity
 
     // mode set on creation to one of three types of adapter
     private final int MODE;
@@ -47,8 +47,7 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.ViewHolder> 
         View otherView = inflater.inflate(R.layout.file_entry, parent, false);
 
         // Return a new holder instance
-        ViewHolder viewHolder = new ViewHolder(otherView);
-        return viewHolder;
+        return new ViewHolder(otherView);
     }
 
     // Populating data into the item through holder
@@ -96,11 +95,11 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.ViewHolder> 
     }
 
     // ViewHolder Object - get parts of xml item layout
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        public ImageButton delButton;
-        public TextView fileName;
+    class ViewHolder extends RecyclerView.ViewHolder {
+        ImageButton delButton;
+        TextView fileName;
 
-        public ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
             this.delButton = itemView.findViewById(R.id.fileDelButton);
             this.fileName = itemView.findViewById(R.id.entryFileName);

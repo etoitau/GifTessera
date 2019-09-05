@@ -5,12 +5,14 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.util.Log
 import android.widget.ImageButton
+import androidx.core.content.res.ResourcesCompat
 
 import com.etoitau.giftessera.MainActivity
 import com.etoitau.giftessera.R
 import com.etoitau.giftessera.helpers.filmStripToByteArray
 import com.etoitau.giftessera.helpers.scaleFilmStrip
 import com.etoitau.giftessera.helpers.toFilmstrip
+import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 import kotlin.concurrent.fixedRateTimer
 
@@ -18,23 +20,35 @@ import kotlin.math.max
 import kotlin.math.min
 
 
-
+/**
+ * Object managing current animation project
+ * Holds collection of bitmaps
+ * navigates through it
+ * tells drawingboard what frame to display
+ * runs animation
+ * returns current animation as byte array
+ */
 class DrawSession constructor(val context: Context, val drawingBoard: DrawingBoard){
+    // current animation: list of bitmaps
     var filmStrip = mutableListOf<Bitmap>()
+    // current index in that list
     var filmIndex = 0
+
     val deleteAlertDialog: AlertDialog
     val clearAlertDialog: AlertDialog
 
+    // if this animation is named/saved, the database key and save name
     var saveId: Int? = 0
     var saveName: String? = null
 
-    var animationRunning = false
-    private val DELAY = 250L // 1/4 sec
-    private val FRAME_RATE = 83L // 12 fps
-    var animationTimer: Timer? = null
+    // animation parameters
+    var animationRunning = false        // is it currently running
+    private val DELAY = 250L            // delay between press play and animation start: 1/4 sec
+    private val FRAME_RATE = 83L        // delay between each frame: 12 fps
+    var animationTimer: Timer? = null   // Timer object governing animation
 
     init {
-        filmStrip.add(drawingBoard.getBitmap())
+        filmStrip.add(drawingBoard.getBitmap()) // will be plain white to start
         deleteAlertDialog = buildDeleteAlert()
         clearAlertDialog = buildClearAlert()
     }
@@ -127,7 +141,10 @@ class DrawSession constructor(val context: Context, val drawingBoard: DrawingBoa
                 } else {
                     // if at end of animation
                     animationRunning = false
-                    view.setImageDrawable(context.resources.getDrawable(android.R.drawable.ic_media_play))
+                    view.setImageDrawable(ResourcesCompat.getDrawable(
+                        context.resources,
+                        android.R.drawable.ic_media_play,
+                        null))
                     drawingBoard.editable = true
                     // reactivate buttons
                     context.setButtonsActivated(true)
@@ -142,6 +159,7 @@ class DrawSession constructor(val context: Context, val drawingBoard: DrawingBoa
         clearAlertDialog.show()
     }
 
+    // reset to starting point
     private fun clearSession() {
         drawingBoard.clearBoard()
         filmIndex = 0
@@ -152,14 +170,17 @@ class DrawSession constructor(val context: Context, val drawingBoard: DrawingBoa
             context.updateTitle()
     }
 
+    // load a save file
     fun loadDataBaseFile(databaseFile: DatabaseFile) {
         saveId = databaseFile.id
         saveName = databaseFile.name
+        // use FilmstripToByte helper function to get filmstrip (mutable list of Bitmap) from ByteArray
         filmStrip = toFilmstrip(databaseFile.blob)
         drawingBoard.setBitmap(filmStrip[0])
         filmIndex = 0
     }
 
+    // return ByteArray version of project for export to gif using GifHelper methods
     fun getGif(): ByteArray {
         Log.i("getGif", "called")
         val scaledFilmStrip = scaleFilmStrip(
