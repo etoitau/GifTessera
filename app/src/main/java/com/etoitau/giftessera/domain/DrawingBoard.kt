@@ -32,7 +32,9 @@ class DrawingBoard @JvmOverloads constructor(context: Context, attrs: AttributeS
 
     val GRIDLINE_T: Int = 2                 // thickness of gridlines in pixels
 
-    private var srcBitmap: Bitmap? = null   // bitmap file being displayed/edited here
+
+    private var srcBitmap =         // bitmap file being displayed/edited here
+        whiteBitmap(1, 1)
 
     var paint: Paint = Paint()              // paint object for drawing bitmap
     var color: ColorVal = BLACK             // current paint color, start with black
@@ -48,6 +50,15 @@ class DrawingBoard @JvmOverloads constructor(context: Context, attrs: AttributeS
 
         //start with an all-white board
         srcBitmap = whiteBitmap(nWide, nHigh)
+
+        // set up paint
+        paint.color = ColorVal.LIGHT_GRAY.value
+        paint.strokeWidth =  GRIDLINE_T.toFloat()
+        paint.style = Paint.Style.STROKE
+        paint.maskFilter = null
+
+        // refresh screen with now properly sized srcBitmap
+        invalidate()
     }
 
     fun setBitmap(newSrcBitmap: Bitmap) {
@@ -56,7 +67,7 @@ class DrawingBoard @JvmOverloads constructor(context: Context, attrs: AttributeS
     }
 
     fun getBitmap(): Bitmap {
-        return srcBitmap!!
+        return srcBitmap
     }
 
     /**
@@ -67,11 +78,19 @@ class DrawingBoard @JvmOverloads constructor(context: Context, attrs: AttributeS
         super.onDraw(canvas)
 
         canvas!!.save()
-        val dwgBitmap = Bitmap.createScaledBitmap(srcBitmap!!,
-            srcBitmap!!.width * xScale,
-            srcBitmap!!.height * yScale, false)
-        val drawingCanvas = Canvas(dwgBitmap!!)
-        drawingCanvas.drawBitmap(dwgBitmap, 0f, 0f, paint)
+
+        // draw each source pixel as a scaled up rectangle
+        paint.style = Paint.Style.FILL_AND_STROKE
+        var xRect: Float
+        var yRect: Float
+        for (x in 0 until srcBitmap.width) {
+            for (y in 0 until srcBitmap.height) {
+                paint.color = srcBitmap.getPixel(x, y)
+                xRect = x * xScale.toFloat()
+                yRect = y * yScale.toFloat()
+                canvas.drawRect(xRect, yRect, xRect + xScale, yRect + yScale, paint)
+            }
+        }
 
         // draw gridlines
         paint.color = ColorVal.LIGHT_GRAY.value
@@ -79,18 +98,17 @@ class DrawingBoard @JvmOverloads constructor(context: Context, attrs: AttributeS
         paint.style = Paint.Style.STROKE
         paint.maskFilter = null
         // vert lines
-        for (i in 1 until srcBitmap!!.width) {
-            drawingCanvas.drawLine(i.toFloat() * xScale, 0f,
-                i.toFloat() * xScale, srcBitmap!!.height * yScale.toFloat(), paint)
+        for (i in 1 until srcBitmap.width) {
+            canvas.drawLine(i.toFloat() * xScale, 0f,
+                i.toFloat() * xScale, srcBitmap.height * yScale.toFloat(), paint)
         }
         // horiz lines
-        for (i in 1 until srcBitmap!!.height) {
-            drawingCanvas.drawLine(0f, i.toFloat() * yScale,
-                srcBitmap!!.width * xScale.toFloat(), i.toFloat() * yScale,
+        for (i in 1 until srcBitmap.height) {
+            canvas.drawLine(0f, i.toFloat() * yScale,
+                srcBitmap.width * xScale.toFloat(), i.toFloat() * yScale,
                 paint)
         }
 
-        canvas.drawBitmap(dwgBitmap, 0f, 0f, paint)
         canvas.restore()
     }
 
