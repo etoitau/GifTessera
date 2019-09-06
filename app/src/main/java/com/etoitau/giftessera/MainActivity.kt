@@ -9,6 +9,7 @@ import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
+import android.text.method.LinkMovementMethod
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.Menu
@@ -24,6 +25,7 @@ import com.etoitau.giftessera.domain.*
 import com.etoitau.giftessera.helpers.DBHelper
 import com.etoitau.giftessera.helpers.FilesAdapter
 import com.etoitau.giftessera.helpers.toByte
+import kotlinx.android.synthetic.main.about_display.*
 import kotlinx.android.synthetic.main.activity_main.*
 
 /**
@@ -56,6 +58,9 @@ class MainActivity : AppCompatActivity() {
 
         // add listener for peek button
         setPeekListener()
+
+        // put current app version in About display
+        versionTextView.text = BuildConfig.VERSION_NAME
     }
 
     /**
@@ -185,7 +190,8 @@ class MainActivity : AppCompatActivity() {
             R.id.menuLoadGif -> loadFromDB()
             R.id.menuClearGif -> clearCurrentSession()
             R.id.menuExportGif -> exportGif()
-            R.id.menuHelp -> helpDisplay.visibility = View.VISIBLE
+            R.id.menuHelp -> showHelp()
+            R.id.menuAbout -> showAbout()
             else -> {
                 showToast(resources.getString(R.string.invalid_selection))
             }
@@ -372,8 +378,25 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun showHelp() {
+        helpDisplay.visibility = View.VISIBLE
+        title = getString(R.string.app_name) + " - " + getString(R.string.help)
+    }
+
     // Hide help screen when user is done with it, called with an onClick
     fun dismissHelp(view: View) {
         helpDisplay.visibility = View.GONE
+        updateTitle()
+    }
+
+    fun showAbout() {
+        aboutDisplay.visibility = View.VISIBLE
+        title = getString(R.string.app_name) + " - " + getString(R.string.about)
+        authorTextView.movementMethod = LinkMovementMethod.getInstance()
+        licenseTextView.movementMethod = LinkMovementMethod.getInstance()
+    }
+    fun dismissAbout(view: View) {
+        aboutDisplay.visibility = View.GONE
+        updateTitle()
     }
 }

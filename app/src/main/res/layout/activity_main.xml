@@ -229,7 +229,16 @@
     <include
         android:id="@+id/helpDisplay"
         layout="@layout/help_display"
-        android:onClick="dismissHelp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+<!--    About display that pops up when selected from menu-->
+    <include
+        android:id="@+id/aboutDisplay"
+        layout="@layout/about_display"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

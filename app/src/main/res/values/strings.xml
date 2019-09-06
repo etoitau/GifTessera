@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">GifTessera</string>
+<!--    Used in About display. This is set programmatically to
+    actual versionName, but keep current here just in case-->
+    <string name="app_version">1.0</string>
 
 <!--    Button names-->
     <string name="peek_button">Peek Button</string>
@@ -76,5 +79,18 @@
     <string name="peek_help_entry">Peek previous. Shows previous frame as long as it is held down.</string>
     <string name="back_to_giftessera">Back to GifTessera</string>
     <string name="help">Help</string>
+
+<!--    About text-->
+    <string name="about">About</string>
+    <string name="version">Version</string>
+    <string name="by">By</string>
+    <string name="author"><a href="http://www.kchatman.com/">Kyle Chatman</a></string>
+    <string name="license">License</string>
+    <string name="license_is">GifTessera is fre to use,
+        <a href="https://github.com/etoitau/GifTessera">open source</a>,
+        and is licensed <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>
+        by <a href="https://creativecommons.org/">Creative Commons</a>.
+        But if you enjoy it and want to support my work,
+        feel free to donate something <a href="https://www.paypal.me/etoitau">here</a>. Thanks!</string>
 
 </resources>

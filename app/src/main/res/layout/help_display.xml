@@ -95,7 +95,8 @@
         app:layout_constraintBottom_toBottomOf="@+id/prevButtonHelp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/prevButtonHelp"
-        app:layout_constraintTop_toTopOf="@+id/prevButtonHelp" />
+        app:layout_constraintTop_toTopOf="@+id/prevButtonHelp"
+        android:clickable="true"/>
 
     <TextView
         android:id="@+id/textView2"
@@ -107,7 +108,8 @@
         app:layout_constraintBottom_toBottomOf="@+id/nextButtonHelp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/nextButtonHelp"
-        app:layout_constraintTop_toTopOf="@+id/nextButtonHelp" />
+        app:layout_constraintTop_toTopOf="@+id/nextButtonHelp"
+        android:clickable="true"/>
 
     <TextView
         android:id="@+id/textView3"
@@ -119,7 +121,8 @@
         app:layout_constraintBottom_toBottomOf="@+id/playButtonHelp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/playButtonHelp"
-        app:layout_constraintTop_toTopOf="@+id/playButtonHelp" />
+        app:layout_constraintTop_toTopOf="@+id/playButtonHelp"
+        android:clickable="true"/>
 
     <TextView
         android:id="@+id/textView4"
@@ -131,7 +134,8 @@
         app:layout_constraintBottom_toBottomOf="@+id/imageButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imageButton"
-        app:layout_constraintTop_toTopOf="@+id/imageButton" />
+        app:layout_constraintTop_toTopOf="@+id/imageButton"
+        android:clickable="true"/>
 
     <TextView
         android:id="@+id/textView5"
@@ -143,7 +147,8 @@
         app:layout_constraintBottom_toBottomOf="@+id/deleteButtonHelp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/deleteButtonHelp"
-        app:layout_constraintTop_toTopOf="@+id/deleteButtonHelp" />
+        app:layout_constraintTop_toTopOf="@+id/deleteButtonHelp"
+        android:clickable="true"/>
 
     <TextView
         android:id="@+id/textView6"
@@ -155,7 +160,8 @@
         app:layout_constraintBottom_toBottomOf="@+id/addButtonHelp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/addButtonHelp"
-        app:layout_constraintTop_toTopOf="@+id/addButtonHelp" />
+        app:layout_constraintTop_toTopOf="@+id/addButtonHelp"
+        android:clickable="true"/>
 
     <TextView
         android:id="@+id/textView7"
@@ -167,9 +173,10 @@
         app:layout_constraintBottom_toBottomOf="@+id/peekButtonHelp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/peekButtonHelp"
-        app:layout_constraintTop_toTopOf="@+id/peekButtonHelp" />
+        app:layout_constraintTop_toTopOf="@+id/peekButtonHelp"
+        android:clickable="true"/>
 
-<!--    Button to dismiss help display. Can also click anywhere else-->
+<!--    Button to dismiss help display.-->
     <Button
         android:id="@+id/button"
         android:layout_width="wrap_content"

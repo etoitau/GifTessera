@@ -7,4 +7,5 @@
     <item android:title="@string/clear" android:id="@+id/menuClearGif"></item>
     <item android:title="@string/export" android:id="@+id/menuExportGif"></item>
     <item android:title="@string/help" android:id="@+id/menuHelp"></item>
+    <item android:title="@string/about" android:id="@+id/menuAbout"></item>
 </menu>
