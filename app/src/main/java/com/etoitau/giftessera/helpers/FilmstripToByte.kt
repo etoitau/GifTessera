@@ -67,7 +67,7 @@ fun diffFrame(start: Bitmap, end: Bitmap): MutableList<Byte> {
         for (j in 0 until start.height) {
             val fromStart = start.get(i, j)
             val fromEnd = end.get(i, j)
-            if (!fromStart.equals(fromEnd)) {
+            if (fromStart != fromEnd) {
                 output.add(i.toByte())                      // x
                 output.add(j.toByte())                      // y
                 output.add(Color.red(fromEnd).toByte())     // R

@@ -18,8 +18,8 @@ import com.etoitau.giftessera.domain.DatabaseFile;
 import java.util.List;
 
 /**
- * Adapter for recyclerview to show Others
- * Has three modes for showing: collected files, burned files, or files not categorized (browse)
+ * Adapter for RecyclerView to show DatabaseFiles
+ * Has two modes for showing: save mode, and load mode
  */
 public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.ViewHolder> {
     private List<DatabaseFile> files; // the data model

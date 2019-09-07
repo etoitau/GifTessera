@@ -29,11 +29,11 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?):
 
     // create table
     override fun onCreate(db: SQLiteDatabase) {
-        val CREATE_PRODUCTS_TABLE = ("CREATE TABLE " + TABLE_NAME +
+        val createProductsTable = ("CREATE TABLE " + TABLE_NAME +
                 "(" + COLUMN_ID + " INTEGER PRIMARY KEY, " +
                 COLUMN_NAME + " TEXT, " +
                 COLUMN_FILE + " BLOB " + ")")
-        db.execSQL(CREATE_PRODUCTS_TABLE)
+        db.execSQL(createProductsTable)
     }
 
     // upgrade is just drop previous table and create new one
@@ -65,7 +65,7 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?):
     // note we check on new file creation in FilesActivity that name does not already exist in database
     fun deleteFile(databaseFile: DatabaseFile) {
         val db = this.writableDatabase
-        val selection = COLUMN_NAME + " LIKE ?"
+        val selection = "$COLUMN_NAME LIKE ?"
         db.delete(TABLE_NAME, selection, arrayOf(databaseFile.name))
         db.close()
     }

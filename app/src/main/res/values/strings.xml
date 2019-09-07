@@ -66,7 +66,7 @@
     <string name="fs_not_available">File system not available</string>
     <string name="saving_to_gif">Saving %s to gif…</string>
     <string name="save_before_export">Must save before exporting</string>
-    <string name="finished_saving_gif">Finished saving %s to gif</string>
+    <string name="finished_saving_gif">Finished saving gif</string>
     <string name="error_saving_gif">Error saving %s to gif</string>
 
 <!--    Help text-->
@@ -86,7 +86,7 @@
     <string name="by">By</string>
     <string name="author"><a href="http://www.kchatman.com/">Kyle Chatman</a></string>
     <string name="license">License</string>
-    <string name="license_is">GifTessera is fre to use,
+    <string name="license_is">GifTessera is free to use,
         <a href="https://github.com/etoitau/GifTessera">open source</a>,
         and is licensed <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>
         by <a href="https://creativecommons.org/">Creative Commons</a>.

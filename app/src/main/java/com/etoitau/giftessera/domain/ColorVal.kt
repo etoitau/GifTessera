@@ -3,7 +3,7 @@ package com.etoitau.giftessera.domain
 import android.graphics.Color
 
 /**
- * App - specific pallate of colors
+ * App - specific palette of colors
  * UI Color button tags refer to these values for setting paint color
  */
 enum class ColorVal(val value: Int) {

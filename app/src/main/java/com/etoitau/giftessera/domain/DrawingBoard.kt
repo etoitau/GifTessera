@@ -1,11 +1,11 @@
 package com.etoitau.giftessera.domain
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import com.etoitau.giftessera.domain.ColorVal.BLACK
@@ -13,7 +13,6 @@ import com.etoitau.giftessera.helpers.whiteBitmap
 import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
-import kotlin.math.round
 
 /**
  * View element that shows and allows editing of current animation frame
@@ -21,22 +20,22 @@ import kotlin.math.round
 class DrawingBoard @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) :
     View(context, attrs) {
 
+    companion object {
+        private const val SQ_PER_IN: Int = 4          // how big do we want drawing pixels to be on screen
+        private const val MIN_SQUARES: Int = 8        // at least this many squares each way on the screen
+        const val GRIDLINE_T: Int = 2                 // thickness of gridlines in pixels
+    }
+
     var editable: Boolean = true            // if animation is being shown, don't want to allow editing
 
     var xScale: Int = 1                     // how many screen pixels should a drawing pixel take
     var yScale: Int = 1
-    var dpi = 1                             // screen dpi to determine scale
-
-    private val SQ_PER_IN: Int = 4          // how big do we want drawing pixels to be on screen
-    private val MIN_SQUARES: Int = 8        // at least this many squares each way on the screen
-
-    val GRIDLINE_T: Int = 2                 // thickness of gridlines in pixels
-
+    private var dpi = 1                             // screen dpi to determine scale
 
     private var srcBitmap =         // bitmap file being displayed/edited here
         whiteBitmap(1, 1)
 
-    var paint: Paint = Paint()              // paint object for drawing bitmap
+    private var paint: Paint = Paint()              // paint object for drawing bitmap
     var color: ColorVal = BLACK             // current paint color, start with black
 
 
@@ -97,12 +96,12 @@ class DrawingBoard @JvmOverloads constructor(context: Context, attrs: AttributeS
         paint.strokeWidth =  GRIDLINE_T.toFloat()
         paint.style = Paint.Style.STROKE
         paint.maskFilter = null
-        // vert lines
+        // vertical lines
         for (i in 1 until srcBitmap.width) {
             canvas.drawLine(i.toFloat() * xScale, 0f,
                 i.toFloat() * xScale, srcBitmap.height * yScale.toFloat(), paint)
         }
-        // horiz lines
+        // horizontal lines
         for (i in 1 until srcBitmap.height) {
             canvas.drawLine(0f, i.toFloat() * yScale,
                 srcBitmap.width * xScale.toFloat(), i.toFloat() * yScale,
@@ -115,6 +114,7 @@ class DrawingBoard @JvmOverloads constructor(context: Context, attrs: AttributeS
     /**
      * when user touches the board, paint touched squares
      */
+    @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
         if (!editable)
             return false
@@ -142,15 +142,15 @@ class DrawingBoard @JvmOverloads constructor(context: Context, attrs: AttributeS
      * take screen position from onTouchEvent, convert to source bitmap pixel location,
      * and paint that pixel with current paint color
      */
-    fun paintSquare(x: Float, y: Float) {
-        val downX = min(max(0, floor(x / xScale).toInt()), srcBitmap!!.width - 1)
-        val downY = min(max(0, floor(y / yScale).toInt()), srcBitmap!!.height - 1)
-        srcBitmap!!.setPixel(downX, downY, color.value)
+    private fun paintSquare(x: Float, y: Float) {
+        val downX = min(max(0, floor(x / xScale).toInt()), srcBitmap.width - 1)
+        val downY = min(max(0, floor(y / yScale).toInt()), srcBitmap.height - 1)
+        srcBitmap.setPixel(downX, downY, color.value)
     }
 
     fun clearBoard() {
-        val w = srcBitmap!!.width
-        val h = srcBitmap!!.height
+        val w = srcBitmap.width
+        val h = srcBitmap.height
         srcBitmap = whiteBitmap(w, h)
         invalidate()
     }

@@ -1,7 +1,6 @@
 package com.etoitau.giftessera.domain
 
 import android.app.AlertDialog
-import android.content.Context
 import android.graphics.Bitmap
 import android.util.Log
 import android.widget.ImageButton
@@ -12,7 +11,7 @@ import com.etoitau.giftessera.R
 import com.etoitau.giftessera.helpers.filmStripToByteArray
 import com.etoitau.giftessera.helpers.scaleFilmStrip
 import com.etoitau.giftessera.helpers.toFilmstrip
-import kotlinx.android.synthetic.main.activity_main.*
+import com.etoitau.giftessera.helpers.whiteBitmap
 import java.util.*
 import kotlin.concurrent.fixedRateTimer
 
@@ -24,18 +23,23 @@ import kotlin.math.min
  * Object managing current animation project
  * Holds collection of bitmaps
  * navigates through it
- * tells drawingboard what frame to display
+ * tells drawingBoard what frame to display
  * runs animation
  * returns current animation as byte array
  */
-class DrawSession constructor(val context: Context, val drawingBoard: DrawingBoard){
+class DrawSession constructor(private val mainActivity: MainActivity, private val drawingBoard: DrawingBoard){
+    companion object {
+        private const val DELAY = 250L        // delay between press play and animation start: 1/4 sec
+        private const val FRAME_RATE = 83L    // delay between each frame: 12 fps
+    }
+
     // current animation: list of bitmaps
     var filmStrip = mutableListOf<Bitmap>()
     // current index in that list
     var filmIndex = 0
 
-    val deleteAlertDialog: AlertDialog
-    val clearAlertDialog: AlertDialog
+    private val deleteAlertDialog: AlertDialog
+    private val clearAlertDialog: AlertDialog
 
     // if this animation is named/saved, the database key and save name
     var saveId: Int? = 0
@@ -43,8 +47,6 @@ class DrawSession constructor(val context: Context, val drawingBoard: DrawingBoa
 
     // animation parameters
     var animationRunning = false        // is it currently running
-    private val DELAY = 250L            // delay between press play and animation start: 1/4 sec
-    private val FRAME_RATE = 83L        // delay between each frame: 12 fps
     var animationTimer: Timer? = null   // Timer object governing animation
 
     init {
@@ -93,37 +95,42 @@ class DrawSession constructor(val context: Context, val drawingBoard: DrawingBoa
     /**
      * Delete current frame
      */
-    fun deleteFrame() {
+    private fun deleteFrame() {
         if (filmStrip.size == 1) {
-            drawingBoard.clearBoard()
+            // if only one frame left, just replace it with all white
+            filmStrip[0] = whiteBitmap(filmStrip[0].width, filmStrip[0].height)
         } else {
+            // if more then 1, remove as requested
             filmStrip.removeAt(filmIndex)
-            filmIndex = min(max(filmIndex - 1, 0), filmStrip.lastIndex)
-            drawingBoard.setBitmap(filmStrip[filmIndex])
         }
+        // index should normally decrement, but make sure doesn't fall outside filmstrip range
+        filmIndex = min(max(filmIndex - 1, 0), filmStrip.lastIndex)
+        // update board and title
+        drawingBoard.setBitmap(filmStrip[filmIndex])
+        mainActivity.updateTitle()
     }
 
-    fun buildDeleteAlert(): AlertDialog {
-        val builder = AlertDialog.Builder(context)
+    private fun buildDeleteAlert(): AlertDialog {
+        val builder = AlertDialog.Builder(mainActivity)
         builder.setTitle(R.string.alert_delete_frame_title)
         builder.setMessage(R.string.alert_delete_frame_message)
-        builder.setPositiveButton(R.string.yes_delete) {dialog, which ->
+        builder.setPositiveButton(R.string.yes_delete) { _, _ ->
             deleteFrame()
         }
-        builder.setNegativeButton(R.string.no_never_mind) {dialog, which ->
+        builder.setNegativeButton(R.string.no_never_mind) { _, _ ->
             // nothing
         }
         return builder.create()
     }
 
-    fun buildClearAlert(): AlertDialog {
-        val builder = AlertDialog.Builder(context)
+    private fun buildClearAlert(): AlertDialog {
+        val builder = AlertDialog.Builder(mainActivity)
         builder.setTitle(R.string.alert_clear_session_title)
         builder.setMessage(R.string.alert_clear_session_message)
-        builder.setPositiveButton(R.string.yes_delete) {dialog, which ->
+        builder.setPositiveButton(R.string.yes_delete) { _, _ ->
             clearSession()
         }
-        builder.setNegativeButton(R.string.no_never_mind) {dialog, which ->
+        builder.setNegativeButton(R.string.no_never_mind) { _, _ ->
             // nothing
         }
         return builder.create()
@@ -133,7 +140,7 @@ class DrawSession constructor(val context: Context, val drawingBoard: DrawingBoa
     fun runAnimation(view: ImageButton) {
         drawingBoard.setBitmap(filmStrip[filmIndex])
         animationTimer = fixedRateTimer(null, false, DELAY, FRAME_RATE) {
-            (context as MainActivity).runOnUiThread {
+            (mainActivity as MainActivity).runOnUiThread {
                 if (filmIndex < filmStrip.lastIndex) {
                     // if not at end of animation yet
                     animationRunning = true
@@ -142,12 +149,12 @@ class DrawSession constructor(val context: Context, val drawingBoard: DrawingBoa
                     // if at end of animation
                     animationRunning = false
                     view.setImageDrawable(ResourcesCompat.getDrawable(
-                        context.resources,
+                        mainActivity.resources,
                         android.R.drawable.ic_media_play,
                         null))
                     drawingBoard.editable = true
                     // reactivate buttons
-                    context.setButtonsActivated(true)
+                    mainActivity.setButtonsActivated(true)
 
                     cancel()
                 }
@@ -166,8 +173,8 @@ class DrawSession constructor(val context: Context, val drawingBoard: DrawingBoa
         filmStrip.clear()
         filmStrip.add(drawingBoard.getBitmap())
         saveName = null
-        if (context is MainActivity)
-            context.updateTitle()
+        if (mainActivity is MainActivity)
+            mainActivity.updateTitle()
     }
 
     // load a save file

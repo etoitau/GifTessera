@@ -35,7 +35,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity() {
     lateinit var drawSession: DrawSession   // object managing current animation project
     var isPeeking = false                   // currently in peek view mode
-    lateinit var toast: Toast               // reusable toast object
+    private lateinit var toast: Toast               // reusable toast object
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -103,14 +103,12 @@ class MainActivity : AppCompatActivity() {
     private fun setPeekListener() {
         peekButton.setOnTouchListener(object: View.OnTouchListener {
             override fun onTouch(view: View, event: MotionEvent): Boolean {
-                Log.i("ontouch", "called")
                 if (event.action == MotionEvent.ACTION_DOWN && drawSession.filmIndex > 0) {
                     isPeeking = true
                     drawSession.getPrev()
                     drawingBoard.alpha = 0.7f
                     updateTitle()
                 } else if (event.action == MotionEvent.ACTION_UP && isPeeking) {
-                    Log.i("actionup", "called")
                     drawingBoard.alpha = 1.0f
                     drawSession.getNext()
                     updateTitle()
@@ -132,7 +130,7 @@ class MainActivity : AppCompatActivity() {
      * Update title bar with a specific frame
      * Will show current animation's save name if exists
      */
-    private fun updateTitle(number: Int) {
+    fun updateTitle(number: Int) {
         val frame = resources.getString(R.string.frame)
         val sessionName = drawSession.saveName
         var showName = sessionName
@@ -200,7 +198,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * modifies and shows a premade toast with provided message
+     * modifies and shows a pre-made toast with provided message
      * @param message
      */
     fun showToast(message: String) {
@@ -213,7 +211,7 @@ class MainActivity : AppCompatActivity() {
      * If working on previously saved project, update database with current version
      * else treat as Save As and go to create new save file
      */
-    fun saveToDB() {
+    private fun saveToDB() {
         if (drawSession.saveName == null) {
             // if drawSession doesn't have project name, project is not in database yet
             saveAsToDB()
@@ -237,7 +235,7 @@ class MainActivity : AppCompatActivity() {
     /**
      * For Save As, send to FilesActivity
      */
-    fun saveAsToDB() {
+    private fun saveAsToDB() {
         val intent = Intent(this, FilesActivity::class.java)
         intent.putExtra("mode", FilesAdapter.SAVING)
         intent.putExtra("file", toByte(drawSession.filmStrip))
@@ -247,7 +245,7 @@ class MainActivity : AppCompatActivity() {
     /**
      * For Load, send to FilesActivity
      */
-    fun loadFromDB() {
+    private fun loadFromDB() {
         val intent = Intent(this, FilesActivity::class.java)
         intent.putExtra("mode", FilesAdapter.LOADING)
         startActivityForResult(intent, 1)
@@ -259,7 +257,7 @@ class MainActivity : AppCompatActivity() {
      */
     override fun onActivityResult (requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == 1 && resultCode == 1 && data != null) {
-            // if saved or loaded filmstrip from sqlite
+            // if saved or loaded filmstrip from SQLite
             // unpack and send to drawSession
             val id = data.getIntExtra("id", 0)
             val name = data.getStringExtra("name")
@@ -273,12 +271,12 @@ class MainActivity : AppCompatActivity() {
         } else if (requestCode == 3 && resultCode == Activity.RESULT_OK) {
             // if saving gif to phone
             if (data != null && data.data != null) {
-                // get uri and send to asynctask to save in background
+                // get uri and send to AsyncTask to save in background
                 val uri: Uri = data.data!!
                 val fName = drawSession.saveName
                 // let user know save is starting in background
                 showToast(String.format(getString(R.string.saving_to_gif), fName))
-                // get and start asynctask
+                // get and start AsyncTask
                 val writeGifFile = WriteGifFile()
                 writeGifFile.execute(uri)
             }
@@ -286,7 +284,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     // clear and start over
-    fun clearCurrentSession() {
+    private fun clearCurrentSession() {
         drawSession.confirmClearSession()
     }
 
@@ -298,7 +296,7 @@ class MainActivity : AppCompatActivity() {
      * - we have required permissions
      * Then send them to pick file name/location
      */
-    fun exportGif() {
+    private fun exportGif() {
         if (drawSession.saveName == null) {
             // check saved locally first (so it has name)
             showToast(getString(R.string.save_before_export))
@@ -349,7 +347,7 @@ class MainActivity : AppCompatActivity() {
         override fun onPostExecute(result: Int?) {
             val fName = drawSession.saveName
             if (result == 1) {
-                showToast(String.format(getString(R.string.finished_saving_gif), fName))
+                showToast(getString(R.string.finished_saving_gif))
             } else {
                 showToast(String.format(getString(R.string.error_saving_gif), fName))
             }
@@ -378,7 +376,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun showHelp() {
+    private fun showHelp() {
         helpDisplay.visibility = View.VISIBLE
         title = getString(R.string.app_name) + " - " + getString(R.string.help)
     }
@@ -389,7 +387,7 @@ class MainActivity : AppCompatActivity() {
         updateTitle()
     }
 
-    fun showAbout() {
+    private fun showAbout() {
         aboutDisplay.visibility = View.VISIBLE
         title = getString(R.string.app_name) + " - " + getString(R.string.about)
         authorTextView.movementMethod = LinkMovementMethod.getInstance()
