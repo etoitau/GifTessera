@@ -1,9 +1,11 @@
 package com.etoitau.giftessera
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
@@ -22,11 +24,13 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import com.etoitau.giftessera.domain.*
+import com.etoitau.giftessera.gifencoder.AnimatedGifEncoder
 import com.etoitau.giftessera.helpers.DBHelper
 import com.etoitau.giftessera.helpers.FilesAdapter
 import com.etoitau.giftessera.helpers.toByte
 import kotlinx.android.synthetic.main.about_display.*
 import kotlinx.android.synthetic.main.activity_main.*
+import java.io.ByteArrayOutputStream
 
 /**
  * Main Activity
@@ -273,9 +277,6 @@ class MainActivity : AppCompatActivity() {
             if (data != null && data.data != null) {
                 // get uri and send to AsyncTask to save in background
                 val uri: Uri = data.data!!
-                val fName = drawSession.saveName
-                // let user know save is starting in background
-                showToast(String.format(getString(R.string.saving_to_gif), fName))
                 // get and start AsyncTask
                 val writeGifFile = WriteGifFile()
                 writeGifFile.execute(uri)
@@ -329,13 +330,53 @@ class MainActivity : AppCompatActivity() {
 
     /**
      * Given Uri location of file user selected to save gif to
-     * write data to that file in background and notify when done
+     * write data to that file in background and notify progress
      */
+    @SuppressLint("StaticFieldLeak")
     inner class WriteGifFile : AsyncTask<Uri, Void, Int>() {
+        // save name here so user can work on something else
+        private val fName = drawSession.saveName
+
         override fun doInBackground(vararg uri: Uri?): Int {
+            // get deep copy of filmstrip so they can keep working
+            val copyStrip = mutableListOf<Bitmap>()
+            for (frame: Bitmap in drawSession.filmStrip)
+                copyStrip.add(frame.copy(frame.config, true))
+
+            // let user know save is starting in background
+            showToast(String.format(getString(R.string.saving_to_gif), fName))
+
+            // ByteArray to put gif in
+            val gifByteArray: ByteArray
+
+            // generate gif
+            try {
+                val bos = ByteArrayOutputStream()
+                val e = AnimatedGifEncoder()
+                e.start(bos)
+                // configure gif
+                e.setDelay(DrawSession.FRAME_RATE.toInt())
+                e.setRepeat(0) // loop indefinitely
+                // add each frame scaled up to display size
+                val nFrames = copyStrip.size
+                for (i in 0 until nFrames) {
+                    // notify progress
+                    showToast(String.format(getString(R.string.processing_frame), i + 1, nFrames + 1))
+                    e.addFrame(Bitmap.createScaledBitmap(copyStrip[i],
+                        copyStrip[i].width * drawingBoard.xScale,
+                        copyStrip[i].height * drawingBoard.yScale, false))
+                }
+                e.finish()
+                gifByteArray = bos.toByteArray()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                return 0
+            }
+
+            // write gif to file
             try {
                 val fos = contentResolver.openOutputStream(uri[0]!!)
-                fos!!.write(drawSession.getGif())
+                fos!!.write(gifByteArray)
                 fos.close()
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -344,12 +385,14 @@ class MainActivity : AppCompatActivity() {
             return 1
         }
 
+        // let user know save is complete
         override fun onPostExecute(result: Int?) {
-            val fName = drawSession.saveName
             if (result == 1) {
-                showToast(getString(R.string.finished_saving_gif))
+                showToast(String.format(getString(R.string.finished_saving_gif), fName))
+                Log.i("Async finished", "gif saved")
             } else {
                 showToast(String.format(getString(R.string.error_saving_gif), fName))
+                Log.i("Async finished", "error")
             }
         }
     }

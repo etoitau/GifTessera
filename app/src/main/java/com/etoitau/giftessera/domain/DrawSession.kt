@@ -2,14 +2,11 @@ package com.etoitau.giftessera.domain
 
 import android.app.AlertDialog
 import android.graphics.Bitmap
-import android.util.Log
 import android.widget.ImageButton
 import androidx.core.content.res.ResourcesCompat
 
 import com.etoitau.giftessera.MainActivity
 import com.etoitau.giftessera.R
-import com.etoitau.giftessera.helpers.filmStripToByteArray
-import com.etoitau.giftessera.helpers.scaleFilmStrip
 import com.etoitau.giftessera.helpers.toFilmstrip
 import com.etoitau.giftessera.helpers.whiteBitmap
 import java.util.*
@@ -30,7 +27,7 @@ import kotlin.math.min
 class DrawSession constructor(private val mainActivity: MainActivity, private val drawingBoard: DrawingBoard){
     companion object {
         private const val DELAY = 250L        // delay between press play and animation start: 1/4 sec
-        private const val FRAME_RATE = 83L    // delay between each frame: 12 fps
+        const val FRAME_RATE = 83L    // delay between each frame: 12 fps
     }
 
     // current animation: list of bitmaps
@@ -185,20 +182,5 @@ class DrawSession constructor(private val mainActivity: MainActivity, private va
         filmStrip = toFilmstrip(databaseFile.blob)
         drawingBoard.setBitmap(filmStrip[0])
         filmIndex = 0
-    }
-
-    // return ByteArray version of project for export to gif using GifHelper methods
-    fun getGif(): ByteArray {
-        Log.i("getGif", "called")
-        val scaledFilmStrip = scaleFilmStrip(
-            filmStrip,
-            drawingBoard.xScale,
-            drawingBoard.yScale
-        )
-        return filmStripToByteArray(
-            scaledFilmStrip,
-            FRAME_RATE.toInt(),
-            true
-        )
     }
 }

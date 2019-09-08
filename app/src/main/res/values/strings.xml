@@ -64,9 +64,10 @@
     <string name="error_saving">Error Saving</string>
     <string name="saved_as">Saved as</string>
     <string name="fs_not_available">File system not available</string>
-    <string name="saving_to_gif">Saving %s to gif…</string>
     <string name="save_before_export">Must save before exporting</string>
-    <string name="finished_saving_gif">Finished saving gif</string>
+    <string name="saving_to_gif">Saving %s to gif…</string>
+    <string name="processing_frame">Processing frame %d of %d…</string>
+    <string name="finished_saving_gif">Finished saving %s to gif</string>
     <string name="error_saving_gif">Error saving %s to gif</string>
 
 <!--    Help text-->
