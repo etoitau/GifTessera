@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.Uri
@@ -25,12 +26,11 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import com.etoitau.giftessera.domain.*
 import com.etoitau.giftessera.gifencoder.AnimatedGifEncoder
-import com.etoitau.giftessera.helpers.DBHelper
-import com.etoitau.giftessera.helpers.FilesAdapter
-import com.etoitau.giftessera.helpers.toByte
+import com.etoitau.giftessera.helpers.*
 import kotlinx.android.synthetic.main.about_display.*
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.ByteArrayOutputStream
+import java.nio.charset.StandardCharsets
 
 /**
  * Main Activity
@@ -41,23 +41,78 @@ class MainActivity : AppCompatActivity() {
     var isPeeking = false                   // currently in peek view mode
     private lateinit var toast: Toast               // reusable toast object
 
+    val SAVE_STRIP = "filmstrip"
+    val SAVE_FRAME_NUMBER = "frameNumber"
+    val SAVE_ID = "id"
+    val SAVE_NAME = "name"
+    val SAVE_IS_PORTRAIT = "isPortrait"
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // recover save state
+        var recoveredIndex: Int? = null
+        var recoveredFilmstrip: MutableList<Bitmap>? = null
+        var recoveredFrame: Bitmap? = null
+        var recoveredID: Int? = null
+        var recoveredName: String? = null
+        var wasPortrait = true
+
+        try {
+            if (savedInstanceState != null) {
+                recoveredID = savedInstanceState.getInt(SAVE_ID)
+                recoveredName = savedInstanceState.getString(SAVE_NAME)
+                wasPortrait = savedInstanceState.getBoolean(SAVE_IS_PORTRAIT)
+                val savedStripString = savedInstanceState.getString(SAVE_STRIP)
+                recoveredIndex = savedInstanceState.getInt(SAVE_FRAME_NUMBER)
+                if (savedStripString != null) {
+                    recoveredFilmstrip = toFilmstrip(savedStripString.toByteArray(StandardCharsets.ISO_8859_1))
+                    recoveredFrame = recoveredFilmstrip[recoveredIndex]
+                }
+            }
+        } catch (e: Exception) {
+            Log.i("onCreate","Error getting saved instance state")
+            e.printStackTrace()
+        }
+
+
         // initialize toast for use by showToast
         toast = Toast.makeText(this, "", Toast.LENGTH_LONG)
 
+
         // initialize drawingBoard with display metrics
-        // then set up drawSession with created drawingBoard
+        // while working with as-laid-out dimensions, determine if recovered filmstrip needs to be rotated
+        // then set up drawSession with created drawingBoard and processed recovered data if exists
         drawingBoard.post(Runnable {
             val metrics = DisplayMetrics()
+
+            val isPortrait = drawingBoard.width < drawingBoard.height
+
             windowManager.defaultDisplay.getMetrics(metrics)
-            Log.i("width", drawingBoard.width.toString())
-            Log.i("height", drawingBoard.height.toString())
-            Log.i("dpi", metrics.densityDpi.toString())
-            drawingBoard.init(drawingBoard.width, drawingBoard.height, metrics.densityDpi)
+
+            var newFilmstrip: MutableList<Bitmap>? = recoveredFilmstrip
+            var startFrame: Bitmap? = null
+
+            if (recoveredFilmstrip != null && isPortrait && !wasPortrait && recoveredFrame != null) {
+                // if now portrait, but was landscape
+                newFilmstrip = rotateFilmstrip(recoveredFilmstrip, false)
+                startFrame = newFilmstrip[recoveredIndex!!]
+            } else if (recoveredFilmstrip != null && !isPortrait && wasPortrait && recoveredFrame != null) {
+                // if now landscape, but was portrait
+                newFilmstrip = rotateFilmstrip(recoveredFilmstrip, true)
+                startFrame = newFilmstrip[recoveredIndex!!]
+            }
+
+            drawingBoard.init(drawingBoard.width, drawingBoard.height, metrics.densityDpi, startFrame)
+
             drawSession = DrawSession(this@MainActivity, drawingBoard)
+
+            if (newFilmstrip != null && recoveredIndex != null) {
+                drawSession.loadSaveState(newFilmstrip, recoveredIndex, recoveredID, recoveredName, isPortrait)
+                this.updateTitle()
+            }
+
         })
 
         // add listener for peek button
@@ -65,6 +120,27 @@ class MainActivity : AppCompatActivity() {
 
         // put current app version in About display
         versionTextView.text = BuildConfig.VERSION_NAME
+    }
+
+    /**
+     * Save drawSession info so not lost on screen rotate or other event
+     */
+    override fun onSaveInstanceState(outState: Bundle?) {
+        try{
+            outState?.run {
+                putString(SAVE_STRIP, String(toByte(drawSession.filmStrip)!!, StandardCharsets.ISO_8859_1))
+                putInt(SAVE_FRAME_NUMBER, drawSession.filmIndex)
+                putBoolean(SAVE_IS_PORTRAIT, drawingBoard.isPortrait)
+                if (drawSession.saveId != null && drawSession.saveName != null) {
+                    putInt(SAVE_ID, drawSession.saveId!!)
+                    putString(SAVE_NAME, drawSession.saveName)
+                }
+            }
+        } catch (e: Exception) {
+            Log.i("onSaveInstanceState", "saving save state failed")
+        }
+
+        super.onSaveInstanceState(outState)
     }
 
     /**
@@ -221,10 +297,15 @@ class MainActivity : AppCompatActivity() {
             saveAsToDB()
         } else {
             try {
+                var copyToSave = drawSession.filmStrip
+                // always save to db in portrait
+                if (!drawingBoard.isPortrait) {
+                    copyToSave = rotateFilmstrip(drawSession.filmStrip, false)
+                }
                 // new databaseFile
                 val dbFile = DatabaseFile(drawSession.saveId,
                     drawSession.saveName!!,
-                    toByte(drawSession.filmStrip)!!)
+                    toByte(copyToSave)!!)
                 // get database helper
                 val dbHelper = DBHelper(this, null)
                 // update file in database
@@ -240,9 +321,14 @@ class MainActivity : AppCompatActivity() {
      * For Save As, send to FilesActivity
      */
     private fun saveAsToDB() {
+        var copyToSave = drawSession.filmStrip
+        // always save to db in portrait
+        if (!drawingBoard.isPortrait) {
+            copyToSave = rotateFilmstrip(drawSession.filmStrip, false)
+        }
         val intent = Intent(this, FilesActivity::class.java)
         intent.putExtra("mode", FilesAdapter.SAVING)
-        intent.putExtra("file", toByte(drawSession.filmStrip))
+        intent.putExtra("file", toByte(copyToSave))
         startActivityForResult(intent, 1)
     }
 

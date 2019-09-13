@@ -69,6 +69,7 @@
     <string name="processing_frame">Processing frame %d of %d…</string>
     <string name="finished_saving_gif">Finished saving %s to gif</string>
     <string name="error_saving_gif">Error saving %s to gif</string>
+    <string name="error_loading">Error loading file</string>
 
 <!--    Help text-->
     <string name="prev_help_entry">Move to previous frame.</string>

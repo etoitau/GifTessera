@@ -28,9 +28,13 @@ class DrawingBoard @JvmOverloads constructor(context: Context, attrs: AttributeS
 
     var editable: Boolean = true            // if animation is being shown, don't want to allow editing
 
+    var boardWidth: Int = 1
+    var boardHeight: Int = 1
     var xScale: Int = 1                     // how many screen pixels should a drawing pixel take
     var yScale: Int = 1
     private var dpi = 1                             // screen dpi to determine scale
+    // orientation
+    var isPortrait = true
 
     private var srcBitmap =         // bitmap file being displayed/edited here
         whiteBitmap(1, 1)
@@ -39,16 +43,32 @@ class DrawingBoard @JvmOverloads constructor(context: Context, attrs: AttributeS
     var color: ColorVal = BLACK             // current paint color, start with black
 
 
-    fun init(width: Int, height: Int, dpi: Int) {
+    fun init(width: Int, height: Int, dpi: Int, startingFrame: Bitmap?) {
         // set up drawing board size and number of drawing pixels, etc
         this.dpi = dpi
-        val nWide = max(MIN_SQUARES, width / dpi * SQ_PER_IN)
-        val nHigh = max(MIN_SQUARES, height / dpi * SQ_PER_IN)
-        xScale = width / nWide
-        yScale = height / nHigh
+        this.boardWidth = width
+        this.boardHeight = height
+
+        if (width > height) {
+            isPortrait = false
+        }
+
+        var nWide: Int
+        var nHigh: Int
+
+        if (startingFrame == null) {
+            nWide = max(MIN_SQUARES, width / dpi * SQ_PER_IN)
+            nHigh = max(MIN_SQUARES, height / dpi * SQ_PER_IN)
+        } else {
+            nWide = startingFrame.width
+            nHigh = startingFrame.height
+        }
 
         //start with an all-white board
         srcBitmap = whiteBitmap(nWide, nHigh)
+
+        xScale = width / nWide
+        yScale = height / nHigh
 
         // set up paint
         paint.color = ColorVal.LIGHT_GRAY.value
@@ -57,6 +77,13 @@ class DrawingBoard @JvmOverloads constructor(context: Context, attrs: AttributeS
         paint.maskFilter = null
 
         // refresh screen with now properly sized srcBitmap
+        invalidate()
+    }
+
+    fun layout(startingFrame: Bitmap) {
+        xScale = width / startingFrame.width
+        yScale = height / startingFrame.height
+        srcBitmap = startingFrame
         invalidate()
     }
 

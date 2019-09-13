@@ -2,6 +2,7 @@ package com.etoitau.giftessera.helpers
 
 import android.graphics.Bitmap
 import android.graphics.Color
+import android.graphics.Matrix
 import androidx.core.graphics.get
 import com.etoitau.giftessera.domain.ColorVal
 import java.nio.ByteBuffer
@@ -142,4 +143,30 @@ fun toFilmstrip(bytes: ByteArray): MutableList<Bitmap> {
         start = frame
     }
     return output
+}
+
+/**
+ * rotate a bitmap to or from landscape
+ */
+fun rotateBitmap(inBitmap: Bitmap, isToLandscape: Boolean): Bitmap {
+    val matrix: Matrix = Matrix()
+
+    if (isToLandscape) {
+        matrix.postRotate(-90f)
+    } else {
+        matrix.postRotate(90f)
+    }
+
+    return Bitmap.createBitmap(inBitmap, 0, 0, inBitmap.width, inBitmap.height, matrix, true)
+}
+
+/**
+ * rotate a filmstrip
+ */
+fun rotateFilmstrip(inFilmstrip: MutableList<Bitmap>, isToLandscape: Boolean): MutableList<Bitmap> {
+    val outStrip: MutableList<Bitmap> = mutableListOf()
+    for (frame in inFilmstrip) {
+        outStrip.add(rotateBitmap(frame, isToLandscape))
+    }
+    return outStrip
 }

@@ -2,11 +2,14 @@ package com.etoitau.giftessera.domain
 
 import android.app.AlertDialog
 import android.graphics.Bitmap
+import android.graphics.Matrix
+import android.util.Log
 import android.widget.ImageButton
 import androidx.core.content.res.ResourcesCompat
 
 import com.etoitau.giftessera.MainActivity
 import com.etoitau.giftessera.R
+import com.etoitau.giftessera.helpers.rotateFilmstrip
 import com.etoitau.giftessera.helpers.toFilmstrip
 import com.etoitau.giftessera.helpers.whiteBitmap
 import java.util.*
@@ -176,11 +179,26 @@ class DrawSession constructor(private val mainActivity: MainActivity, private va
 
     // load a save file
     fun loadDataBaseFile(databaseFile: DatabaseFile) {
+        // use FilmstripToByte helper function to get filmstrip (mutable list of Bitmap) from ByteArray
+        var gotFilmstrip = toFilmstrip(databaseFile.blob)
+        var filmstripToLoad = gotFilmstrip
+        if (!drawingBoard.isPortrait) {
+            filmstripToLoad = rotateFilmstrip(gotFilmstrip, true)
+        }
+
+        filmStrip = filmstripToLoad
+        filmIndex = 0
+        drawingBoard.layout(filmStrip[filmIndex])
         saveId = databaseFile.id
         saveName = databaseFile.name
-        // use FilmstripToByte helper function to get filmstrip (mutable list of Bitmap) from ByteArray
-        filmStrip = toFilmstrip(databaseFile.blob)
-        drawingBoard.setBitmap(filmStrip[0])
-        filmIndex = 0
+
+    }
+
+    fun loadSaveState(saveFilmstrip: MutableList<Bitmap>, frameNumber: Int, saveId: Int?, saveName: String?, isPortrait: Boolean) {
+        this.saveId = saveId
+        this.saveName = saveName
+        filmStrip = saveFilmstrip
+        filmIndex = frameNumber
+        drawingBoard.setBitmap(filmStrip[filmIndex])
     }
 }
