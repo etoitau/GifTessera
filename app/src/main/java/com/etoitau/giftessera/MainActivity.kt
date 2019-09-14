@@ -14,10 +14,7 @@ import android.os.Environment
 import android.text.method.LinkMovementMethod
 import android.util.DisplayMetrics
 import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
-import android.view.MotionEvent
-import android.view.View
+import android.view.*
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
@@ -39,6 +36,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var drawSession: DrawSession   // object managing current animation project
     var isPeeking = false                   // currently in peek view mode
     private lateinit var toast: Toast               // reusable toast object
+    private var toastOffset: Int = 50
 
     companion object {
         // recovering save state
@@ -49,7 +47,6 @@ class MainActivity : AppCompatActivity() {
         const val SAVE_IS_PORTRAIT = "isPortrait"
 
         // codes
-        const val CODE_OK   = 1
         const val CODE_SAVE = 3
         const val CODE_LOAD = 5
         const val CODE_FILE = 7
@@ -89,6 +86,8 @@ class MainActivity : AppCompatActivity() {
 
         // initialize toast for use by showToast
         toast = Toast.makeText(this, "", Toast.LENGTH_LONG)
+        toastOffset = toast.yOffset * 2
+        toast.setGravity(Gravity.BOTTOM, 0, toastOffset)
 
 
         // initialize drawingBoard with display metrics
@@ -183,7 +182,7 @@ class MainActivity : AppCompatActivity() {
     fun clickAdd(view: View) {
         drawSession.addInsertFrame()
         updateTitle()
-        showToast(String.format(getString(R.string.frame_added_after), drawSession.filmIndex))
+        showToast(String.format(getString(R.string.frame_added_after), drawSession.filmIndex), false)
     }
 
     /**
@@ -281,7 +280,7 @@ class MainActivity : AppCompatActivity() {
             R.id.menuHelp -> showHelp()
             R.id.menuAbout -> showAbout()
             else -> {
-                showToast(resources.getString(R.string.invalid_selection))
+                showToast(resources.getString(R.string.invalid_selection), true)
             }
         }
         return status
@@ -289,16 +288,33 @@ class MainActivity : AppCompatActivity() {
 
     /**
      * modifies and shows a pre-made toast with provided message
+     * if there are many incoming messages they will not pile up, but
+     * later messages may not show because android forces the toast to fade out and not
+     * come back for a bit
      * @param message
      */
-    fun showToast(message: String) {
+    private fun showToast(message: String) {
         toast.setText(message)
         toast.show()
     }
 
-    inner class Toaster(val message: String): Runnable {
-        override fun run() {
+    /**
+     * if low priority, uses showToast above
+     * if high priority, creates new toast and adds to queue so it will definitely get shown
+     */
+    fun showToast(message: String, isPriority: Boolean) {
+        if (isPriority) {
+            val newToast = Toast.makeText(this, message, Toast.LENGTH_LONG)
+            newToast.setGravity(Gravity.BOTTOM, 0, toastOffset)
+            newToast.show()
+        } else {
             showToast(message)
+        }
+    }
+
+    inner class Toaster(private val message: String, private val isPriority: Boolean): Runnable {
+        override fun run() {
+            showToast(message, isPriority)
         }
     }
 
@@ -326,9 +342,9 @@ class MainActivity : AppCompatActivity() {
                 val dbHelper = DBHelper(this, null)
                 // update file in database
                 dbHelper.updateFile(dbFile)
-                showToast(getString(R.string.saved_as) + " " + drawSession.saveName)
+                showToast(getString(R.string.saved_as) + " " + drawSession.saveName, true)
             } catch (e: Exception) {
-                showToast(resources.getString(R.string.error_saving))
+                showToast(resources.getString(R.string.error_saving), true)
             }
         }
     }
@@ -369,7 +385,7 @@ class MainActivity : AppCompatActivity() {
             val name = data.getStringExtra("name")
             val byteArray = data.getByteArrayExtra("file")
             if (name == null || byteArray == null) {
-                showToast(getString(R.string.error_saving))
+                showToast(getString(R.string.error_saving), true)
             } else {
                 drawSession.loadDataBaseFile(DatabaseFile(id, name, byteArray))
                 updateTitle(1)
@@ -402,11 +418,11 @@ class MainActivity : AppCompatActivity() {
     private fun exportGif() {
         if (drawSession.saveName == null) {
             // check saved locally first (so it has name)
-            showToast(getString(R.string.save_before_export))
+            showToast(getString(R.string.save_before_export), true)
             return
         } else if (!isReadyToSave()){
             // check file system is available
-            showToast(getString(R.string.fs_not_available))
+            showToast(getString(R.string.fs_not_available), true)
             return
         }
 
@@ -444,7 +460,7 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
-                    showToast(getString(R.string.permission_required))
+                    showToast(getString(R.string.permission_required), true)
                 }
                 return
             }
@@ -471,7 +487,7 @@ class MainActivity : AppCompatActivity() {
                 copyStrip.add(frame.copy(frame.config, true))
 
             // let user know save is starting in background
-            runOnUiThread(Toaster(String.format(getString(R.string.saving_to_gif), fName)))
+            runOnUiThread(Toaster(String.format(getString(R.string.saving_to_gif), fName), true))
 
             // ByteArray to put gif in
             val gifByteArray: ByteArray
@@ -488,7 +504,7 @@ class MainActivity : AppCompatActivity() {
                 val nFrames = copyStrip.size
                 for (i in 0 until nFrames) {
                     // notify progress
-                    runOnUiThread(Toaster(String.format(getString(R.string.processing_frame), i + 1, nFrames + 1)))
+                    runOnUiThread(Toaster(String.format(getString(R.string.processing_frame), i + 1, nFrames + 1), false))
                     e.addFrame(Bitmap.createScaledBitmap(copyStrip[i],
                         copyStrip[i].width * drawingBoard.xScale,
                         copyStrip[i].height * drawingBoard.yScale, false))
@@ -515,10 +531,10 @@ class MainActivity : AppCompatActivity() {
         // let user know save is complete
         override fun onPostExecute(result: Int?) {
             if (result == 1) {
-                runOnUiThread(Toaster(String.format(getString(R.string.finished_saving_gif), fName)))
+                runOnUiThread(Toaster(String.format(getString(R.string.finished_saving_gif), fName), true))
                 Log.i("Async finished", "gif saved")
             } else {
-                runOnUiThread(Toaster(String.format(getString(R.string.error_saving_gif), fName)))
+                runOnUiThread(Toaster(String.format(getString(R.string.error_saving_gif), fName), true))
                 Log.i("Async finished", "error")
             }
         }

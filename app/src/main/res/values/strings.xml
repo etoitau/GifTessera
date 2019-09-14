@@ -87,7 +87,7 @@
     <string name="about">About</string>
     <string name="version">Version</string>
     <string name="by">By</string>
-    <string name="author"><a href="http://www.kchatman.com/">Kyle Chatman</a></string>
+    <string name="author"><a href="http://cs.kchatman.com/">Kyle Chatman</a></string>
     <string name="license">License</string>
     <string name="license_is">GifTessera is free to use,
         <a href="https://github.com/etoitau/GifTessera">open source</a>,
