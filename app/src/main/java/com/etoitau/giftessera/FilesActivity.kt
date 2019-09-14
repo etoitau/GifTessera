@@ -1,5 +1,6 @@
 package com.etoitau.giftessera
 
+import android.app.Activity
 import android.content.Intent
 import android.database.Cursor
 import android.database.CursorIndexOutOfBoundsException
@@ -225,7 +226,7 @@ class FilesActivity : AppCompatActivity() {
         intent.putExtra("id", databaseFile.id)
         intent.putExtra("name", databaseFile.name)
         intent.putExtra("file", databaseFile.blob)
-        setResult(1, intent)
+        setResult(Activity.RESULT_OK, intent)
         finish()
     }
 }

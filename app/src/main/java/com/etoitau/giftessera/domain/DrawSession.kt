@@ -2,8 +2,6 @@ package com.etoitau.giftessera.domain
 
 import android.app.AlertDialog
 import android.graphics.Bitmap
-import android.graphics.Matrix
-import android.util.Log
 import android.widget.ImageButton
 import androidx.core.content.res.ResourcesCompat
 
@@ -29,8 +27,9 @@ import kotlin.math.min
  */
 class DrawSession constructor(private val mainActivity: MainActivity, private val drawingBoard: DrawingBoard){
     companion object {
-        private const val DELAY = 250L        // delay between press play and animation start: 1/4 sec
-        const val FRAME_RATE = 83L    // delay between each frame: 12 fps
+        private const val DELAY = 250L          // delay between press play and animation start: 1/4 sec
+        const val FRAME_RATE: Int = 12          // frames per second
+        const val FRAME_DELAY = 1000L / FRAME_RATE  // delay between each frame in milliseconds
     }
 
     // current animation: list of bitmaps
@@ -139,7 +138,7 @@ class DrawSession constructor(private val mainActivity: MainActivity, private va
 
     fun runAnimation(view: ImageButton) {
         drawingBoard.setBitmap(filmStrip[filmIndex])
-        animationTimer = fixedRateTimer(null, false, DELAY, FRAME_RATE) {
+        animationTimer = fixedRateTimer(null, false, DELAY, FRAME_DELAY) {
             (mainActivity as MainActivity).runOnUiThread {
                 if (filmIndex < filmStrip.lastIndex) {
                     // if not at end of animation yet

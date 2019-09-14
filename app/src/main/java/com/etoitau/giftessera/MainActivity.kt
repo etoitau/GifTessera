@@ -4,7 +4,6 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
-import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.Uri
@@ -41,11 +40,22 @@ class MainActivity : AppCompatActivity() {
     var isPeeking = false                   // currently in peek view mode
     private lateinit var toast: Toast               // reusable toast object
 
-    val SAVE_STRIP = "filmstrip"
-    val SAVE_FRAME_NUMBER = "frameNumber"
-    val SAVE_ID = "id"
-    val SAVE_NAME = "name"
-    val SAVE_IS_PORTRAIT = "isPortrait"
+    companion object {
+        // recovering save state
+        const val SAVE_STRIP = "filmstrip"
+        const val SAVE_FRAME_NUMBER = "frameNumber"
+        const val SAVE_ID = "id"
+        const val SAVE_NAME = "name"
+        const val SAVE_IS_PORTRAIT = "isPortrait"
+
+        // codes
+        const val CODE_OK   = 1
+        const val CODE_SAVE = 3
+        const val CODE_LOAD = 5
+        const val CODE_FILE = 7
+        const val CODE_PERM = 9
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,7 +74,7 @@ class MainActivity : AppCompatActivity() {
                 recoveredID = savedInstanceState.getInt(SAVE_ID)
                 recoveredName = savedInstanceState.getString(SAVE_NAME)
                 wasPortrait = savedInstanceState.getBoolean(SAVE_IS_PORTRAIT)
-                val savedStripString = savedInstanceState.getString(SAVE_STRIP)
+                val savedStripString = savedInstanceState.getString(Companion.SAVE_STRIP)
                 recoveredIndex = savedInstanceState.getInt(SAVE_FRAME_NUMBER)
                 if (savedStripString != null) {
                     recoveredFilmstrip = toFilmstrip(savedStripString.toByteArray(StandardCharsets.ISO_8859_1))
@@ -128,7 +138,7 @@ class MainActivity : AppCompatActivity() {
     override fun onSaveInstanceState(outState: Bundle?) {
         try{
             outState?.run {
-                putString(SAVE_STRIP, String(toByte(drawSession.filmStrip)!!, StandardCharsets.ISO_8859_1))
+                putString(Companion.SAVE_STRIP, String(toByte(drawSession.filmStrip)!!, StandardCharsets.ISO_8859_1))
                 putInt(SAVE_FRAME_NUMBER, drawSession.filmIndex)
                 putBoolean(SAVE_IS_PORTRAIT, drawingBoard.isPortrait)
                 if (drawSession.saveId != null && drawSession.saveName != null) {
@@ -217,9 +227,9 @@ class MainActivity : AppCompatActivity() {
         if (sessionName == null) {
             // if there's no save name for this animation, show app name
             showName = resources.getString(R.string.app_name)
-        } else if (sessionName.length > 7) {
+        } else if (sessionName.length > 10) {
             // if save name is long, truncate it
-            showName = sessionName.slice(IntRange(0, 6)) + "..."
+            showName = sessionName.slice(IntRange(0, 9)) + "..."
         }
         title = "$showName - $frame $number"
     }
@@ -286,6 +296,12 @@ class MainActivity : AppCompatActivity() {
         toast.show()
     }
 
+    inner class Toaster(val message: String): Runnable {
+        override fun run() {
+            showToast(message)
+        }
+    }
+
     /**
      * "Save" menu item selected
      * If working on previously saved project, update database with current version
@@ -329,7 +345,7 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(this, FilesActivity::class.java)
         intent.putExtra("mode", FilesAdapter.SAVING)
         intent.putExtra("file", toByte(copyToSave))
-        startActivityForResult(intent, 1)
+        startActivityForResult(intent, CODE_SAVE)
     }
 
     /**
@@ -338,7 +354,7 @@ class MainActivity : AppCompatActivity() {
     private fun loadFromDB() {
         val intent = Intent(this, FilesActivity::class.java)
         intent.putExtra("mode", FilesAdapter.LOADING)
-        startActivityForResult(intent, 1)
+        startActivityForResult(intent, CODE_LOAD)
     }
 
     /**
@@ -346,7 +362,7 @@ class MainActivity : AppCompatActivity() {
      * or coming back from picking file location and name for gif export
      */
     override fun onActivityResult (requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == 1 && resultCode == 1 && data != null) {
+        if ((requestCode == CODE_SAVE || requestCode == CODE_LOAD) && resultCode == Activity.RESULT_OK && data != null) {
             // if saved or loaded filmstrip from SQLite
             // unpack and send to drawSession
             val id = data.getIntExtra("id", 0)
@@ -358,7 +374,7 @@ class MainActivity : AppCompatActivity() {
                 drawSession.loadDataBaseFile(DatabaseFile(id, name, byteArray))
                 updateTitle(1)
             }
-        } else if (requestCode == 3 && resultCode == Activity.RESULT_OK) {
+        } else if (requestCode == CODE_FILE && resultCode == Activity.RESULT_OK) {
             // if saving gif to phone
             if (data != null && data.data != null) {
                 // get uri and send to AsyncTask to save in background
@@ -398,9 +414,11 @@ class MainActivity : AppCompatActivity() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
             != PackageManager.PERMISSION_GRANTED) {
             // Permission is not granted
+            // request it and abort save
             ActivityCompat.requestPermissions(this,
                 arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                5)
+                CODE_PERM)
+            return
         }
 
         // use intent to let user pick save location
@@ -410,8 +428,31 @@ class MainActivity : AppCompatActivity() {
             putExtra(Intent.EXTRA_TITLE, drawSession.saveName)
         }
 
-        startActivityForResult(intent, 3)
+        startActivityForResult(intent, CODE_FILE)
         // see activity result for next step
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int,
+                                            permissions: Array<String>, grantResults: IntArray) {
+        when (requestCode) {
+            CODE_PERM -> {
+                // If request is cancelled, the result arrays are empty.
+                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                    exportGif()
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    showToast(getString(R.string.permission_required))
+                }
+                return
+            }
+
+            else -> {
+                // Ignore all other requests.
+            }
+        }
     }
 
     /**
@@ -430,7 +471,7 @@ class MainActivity : AppCompatActivity() {
                 copyStrip.add(frame.copy(frame.config, true))
 
             // let user know save is starting in background
-            showToast(String.format(getString(R.string.saving_to_gif), fName))
+            runOnUiThread(Toaster(String.format(getString(R.string.saving_to_gif), fName)))
 
             // ByteArray to put gif in
             val gifByteArray: ByteArray
@@ -441,13 +482,13 @@ class MainActivity : AppCompatActivity() {
                 val e = AnimatedGifEncoder()
                 e.start(bos)
                 // configure gif
-                e.setDelay(DrawSession.FRAME_RATE.toInt())
+                e.setDelay(DrawSession.FRAME_DELAY.toInt())
                 e.setRepeat(0) // loop indefinitely
                 // add each frame scaled up to display size
                 val nFrames = copyStrip.size
                 for (i in 0 until nFrames) {
                     // notify progress
-                    showToast(String.format(getString(R.string.processing_frame), i + 1, nFrames + 1))
+                    runOnUiThread(Toaster(String.format(getString(R.string.processing_frame), i + 1, nFrames + 1)))
                     e.addFrame(Bitmap.createScaledBitmap(copyStrip[i],
                         copyStrip[i].width * drawingBoard.xScale,
                         copyStrip[i].height * drawingBoard.yScale, false))
@@ -474,10 +515,10 @@ class MainActivity : AppCompatActivity() {
         // let user know save is complete
         override fun onPostExecute(result: Int?) {
             if (result == 1) {
-                showToast(String.format(getString(R.string.finished_saving_gif), fName))
+                runOnUiThread(Toaster(String.format(getString(R.string.finished_saving_gif), fName)))
                 Log.i("Async finished", "gif saved")
             } else {
-                showToast(String.format(getString(R.string.error_saving_gif), fName))
+                runOnUiThread(Toaster(String.format(getString(R.string.error_saving_gif), fName)))
                 Log.i("Async finished", "error")
             }
         }
@@ -522,6 +563,7 @@ class MainActivity : AppCompatActivity() {
         authorTextView.movementMethod = LinkMovementMethod.getInstance()
         licenseTextView.movementMethod = LinkMovementMethod.getInstance()
     }
+
     fun dismissAbout(view: View) {
         aboutDisplay.visibility = View.GONE
         updateTitle()
