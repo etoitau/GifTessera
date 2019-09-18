@@ -124,9 +124,9 @@ class DrawSession constructor(private val mainActivity: MainActivity, private va
 
     private fun buildClearAlert(): AlertDialog {
         val builder = AlertDialog.Builder(mainActivity)
-        builder.setTitle(R.string.alert_clear_session_title)
-        builder.setMessage(R.string.alert_clear_session_message)
-        builder.setPositiveButton(R.string.yes_delete) { _, _ ->
+        builder.setTitle(R.string.alert_new_session_title)
+        builder.setMessage(R.string.alert_new_session_message)
+        builder.setPositiveButton(R.string.yes_new_proj) { _, _ ->
             clearSession()
         }
         builder.setNegativeButton(R.string.no_never_mind) { _, _ ->
@@ -172,8 +172,7 @@ class DrawSession constructor(private val mainActivity: MainActivity, private va
         filmStrip.clear()
         filmStrip.add(drawingBoard.getBitmap())
         saveName = null
-        if (mainActivity is MainActivity)
-            mainActivity.updateTitle()
+        mainActivity.updateTitle()
     }
 
     // load a save file

@@ -26,22 +26,25 @@
     <string name="alert_delete_frame_message">Are you sure you want to delete this frame?</string>
     <string name="no_never_mind">No, never mind</string>
     <string name="yes_delete">Yes, delete</string>
-    <string name="alert_clear_session_title">Confirm Clear Session</string>
-    <string name="alert_clear_session_message">Are you sure you want to delete whole animation?</string>
+    <string name="alert_new_session_title">Confirm New Project</string>
+    <string name="alert_new_session_message">Do you want to start over with a new project?
+        Any current unsaved work will be lost.</string>
+    <string name="yes_new_proj">Yes, new project</string>
     <string name="alert_delete_save_title">Confirm Delete Save File</string>
     <string name="alert_delete_save_message">Are you sure you want to delete </string>
     <string name="yes_save_over">Yes, save over</string>
     <string name="alert_overwrite_save_title">Confirm Overwrite Save</string>
     <string name="alert_overwrite_save_message">Are you sure you want to save over </string>
     <string name="alert_load_save_title">Confirm Load File</string>
-    <string name="alert_load_save_message">Are you sure you want to load %s? Any current unsaved work will be lost.</string>
+    <string name="alert_load_save_message">Are you sure you want to load %s?
+        Any current unsaved work will be lost.</string>
     <string name="yes_load">Yes, load file</string>
 
 <!--    Menu items-->
+    <string name="new_proj">New Project</string>
     <string name="save">Save</string>
     <string name="save_as">Save As</string>
     <string name="load">Load</string>
-    <string name="clear">Clear</string>
     <string name="export">Export Gif</string>
     <string name="invalid_selection">Invalid Selection</string>
 
