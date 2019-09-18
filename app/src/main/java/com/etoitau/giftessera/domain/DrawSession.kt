@@ -38,7 +38,7 @@ class DrawSession constructor(private val mainActivity: MainActivity, private va
     var filmIndex = 0
 
     private val deleteAlertDialog: AlertDialog
-    private val clearAlertDialog: AlertDialog
+    private val newProjectAlertDialog: AlertDialog
 
     // if this animation is named/saved, the database key and save name
     var saveId: Int? = 0
@@ -51,7 +51,7 @@ class DrawSession constructor(private val mainActivity: MainActivity, private va
     init {
         filmStrip.add(drawingBoard.getBitmap()) // will be plain white to start
         deleteAlertDialog = buildDeleteAlert()
-        clearAlertDialog = buildClearAlert()
+        newProjectAlertDialog = buildNewProjectAlert()
     }
 
     /**
@@ -122,12 +122,12 @@ class DrawSession constructor(private val mainActivity: MainActivity, private va
         return builder.create()
     }
 
-    private fun buildClearAlert(): AlertDialog {
+    private fun buildNewProjectAlert(): AlertDialog {
         val builder = AlertDialog.Builder(mainActivity)
         builder.setTitle(R.string.alert_new_session_title)
         builder.setMessage(R.string.alert_new_session_message)
         builder.setPositiveButton(R.string.yes_new_proj) { _, _ ->
-            clearSession()
+            newProject()
         }
         builder.setNegativeButton(R.string.no_never_mind) { _, _ ->
             // nothing
@@ -161,12 +161,12 @@ class DrawSession constructor(private val mainActivity: MainActivity, private va
         }
     }
 
-    fun confirmClearSession() {
-        clearAlertDialog.show()
+    fun confirmNewProject() {
+        newProjectAlertDialog.show()
     }
 
     // reset to starting point
-    private fun clearSession() {
+    private fun newProject() {
         drawingBoard.clearBoard()
         filmIndex = 0
         filmStrip.clear()

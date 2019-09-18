@@ -404,7 +404,7 @@ class MainActivity : AppCompatActivity() {
 
     // clear and start over
     private fun clearCurrentSession() {
-        drawSession.confirmClearSession()
+        drawSession.confirmNewProject()
     }
 
     /**
