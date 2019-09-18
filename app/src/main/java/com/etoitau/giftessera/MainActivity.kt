@@ -272,10 +272,10 @@ class MainActivity : AppCompatActivity() {
         val status = super.onOptionsItemSelected(item)
         // show appropriate confirmation
         when (item.itemId) {
+            R.id.menuNewProj -> clearCurrentSession()
             R.id.menuSaveGif -> saveToDB()
             R.id.menuSaveAs -> saveAsToDB()
             R.id.menuLoadGif -> loadFromDB()
-            R.id.menuClearGif -> clearCurrentSession()
             R.id.menuExportGif -> exportGif()
             R.id.menuHelp -> showHelp()
             R.id.menuAbout -> showAbout()
@@ -404,7 +404,7 @@ class MainActivity : AppCompatActivity() {
 
     // clear and start over
     private fun clearCurrentSession() {
-        drawSession.confirmClearSession()
+        drawSession.confirmNewProject()
     }
 
     /**
