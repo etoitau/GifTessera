@@ -178,6 +178,7 @@ class FilesActivity : AppCompatActivity() {
      * If user clicks on an existing file in save mode,
      * confirm they want to overwrite that file,
      * then do so
+     * @param databaseFile is existing file saved here
      */
     fun overwriteFileAlert(databaseFile: DatabaseFile) {
         // overwrite save confirmation
@@ -186,10 +187,15 @@ class FilesActivity : AppCompatActivity() {
         val message: String = resources.getString(R.string.alert_overwrite_save_message) + " ${databaseFile.name}?"
         builder.setMessage(message)
         builder.setPositiveButton(R.string.yes_save_over) { _, _ ->
-            // use helper to update file in database
-            val dbHelper = DBHelper(this, null)
-            dbHelper.updateFile(databaseFile)
-            returnToMainWithIntent(databaseFile)
+            if (toSave == null) {
+                fileMessageView.text = getString(R.string.no_data)
+            } else {
+                val newDBFile = DatabaseFile(databaseFile.id, databaseFile.name, toSave!!)
+                // use helper to update file in database
+                val dbHelper = DBHelper(this, null)
+                dbHelper.updateFile(newDBFile)
+                returnToMainWithIntent(newDBFile)
+            }
         }
         builder.setNegativeButton(R.string.no_never_mind) { _, _ ->
             // nothing

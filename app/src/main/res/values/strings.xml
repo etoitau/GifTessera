@@ -61,6 +61,7 @@
     <string name="no_files_found">No previous saves found</string>
     <string name="missing_name">Please enter file name</string>
     <string name="existing_name">Name taken, please enter unique name, or tap the file you want to overwrite</string>
+    <string name="no_data">No current data to save</string>
 
 <!--    Main Activity-->
     <string name="frame_added_after">Frame added after %d</string>
