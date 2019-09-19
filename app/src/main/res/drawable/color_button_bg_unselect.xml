@@ -8,5 +8,5 @@
         android:bottom="3dp" />
 
     <corners android:radius="2dp" />
-<!--    <solid android:color="@android:color/transparent" />-->
+<!--    <solid android:colorVal="@android:colorVal/transparent" />-->
 </shape>

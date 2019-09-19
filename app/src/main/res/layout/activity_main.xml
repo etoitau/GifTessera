@@ -27,132 +27,141 @@
         android:background="@drawable/color_button_bg_unselect"
         android:contentDescription="@string/white_button"
         android:onClick="colorClick"
-        android:src="@color/colorWhite"
+        android:scaleType="fitXY"
+        android:src="@drawable/whitepix"
         android:tag="WHITE"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/peekButton"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/grayButton"
+        app:layout_constraintStart_toEndOf="@+id/paletteButton6"
         app:layout_constraintTop_toTopOf="@+id/peekButton" />
 
     <com.etoitau.giftessera.domain.PaletteButton
-        android:id="@+id/grayButton"
+        android:id="@+id/paletteButton6"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/color_button_bg_unselect"
-        android:contentDescription="@string/gray_button"
+        android:contentDescription="@string/dwg_palette_6"
         android:onClick="colorClick"
-        android:src="@color/colorGray"
-        android:tag="GRAY"
+        android:scaleType="fitXY"
+        android:src="@drawable/whitepix"
+        android:tag="6"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/whiteButton"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/blackButton"
+        app:layout_constraintStart_toEndOf="@+id/paletteButton5"
         app:layout_constraintTop_toTopOf="@+id/whiteButton" />
 
     <com.etoitau.giftessera.domain.PaletteButton
-        android:id="@+id/blackButton"
+        android:id="@+id/paletteButton5"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/color_button_bg_select"
-        android:contentDescription="@string/black_button"
+        android:contentDescription="@string/dwg_palette_5"
         android:onClick="colorClick"
-        android:src="@color/colorBlack"
-        android:tag="BLACK"
+        android:scaleType="fitXY"
+        android:src="@drawable/whitepix"
+        android:tag="5"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/grayButton"
+        app:layout_constraintEnd_toStartOf="@+id/paletteButton6"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/purpleButton"
-        app:layout_constraintTop_toTopOf="@+id/grayButton" />
+        app:layout_constraintStart_toEndOf="@+id/paletteButton4"
+        app:layout_constraintTop_toTopOf="@+id/paletteButton6" />
 
     <com.etoitau.giftessera.domain.PaletteButton
-        android:id="@+id/purpleButton"
+        android:id="@+id/paletteButton4"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/color_button_bg_unselect"
+        android:contentDescription="@string/dwg_palette_4"
         android:onClick="colorClick"
-        android:src="@color/colorPurple"
-        android:tag="PURPLE"
+        android:scaleType="fitXY"
+        android:src="@drawable/whitepix"
+        android:tag="4"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/blackButton"
+        app:layout_constraintEnd_toStartOf="@+id/paletteButton5"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/blueButton"
-        app:layout_constraintTop_toTopOf="@+id/blackButton" />
+        app:layout_constraintStart_toEndOf="@+id/paletteButton3"
+        app:layout_constraintTop_toTopOf="@+id/paletteButton5" />
 
     <com.etoitau.giftessera.domain.PaletteButton
-        android:id="@+id/blueButton"
+        android:id="@+id/paletteButton3"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/color_button_bg_unselect"
-        android:contentDescription="@string/purple_button"
+        android:contentDescription="@string/dwg_palette_3"
         android:onClick="colorClick"
-        android:src="@color/colorBlue"
-        android:tag="BLUE"
+        android:scaleType="fitXY"
+        android:src="@drawable/whitepix"
+        android:tag="3"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/purpleButton"
+        app:layout_constraintEnd_toStartOf="@+id/paletteButton4"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/greenButton"
-        app:layout_constraintTop_toTopOf="@+id/purpleButton" />
+        app:layout_constraintStart_toEndOf="@+id/paletteButton2"
+        app:layout_constraintTop_toTopOf="@+id/paletteButton4" />
 
     <com.etoitau.giftessera.domain.PaletteButton
-        android:id="@+id/greenButton"
+        android:id="@+id/paletteButton2"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/color_button_bg_unselect"
-        android:contentDescription="@string/green_button"
+        android:contentDescription="@string/dwg_palette_2"
         android:onClick="colorClick"
-        android:src="@color/colorGreen"
-        android:tag="GREEN"
+        android:scaleType="fitXY"
+        android:src="@drawable/whitepix"
+        android:tag="2"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/blueButton"
+        app:layout_constraintEnd_toStartOf="@+id/paletteButton3"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/yellowButton"
-        app:layout_constraintTop_toTopOf="@+id/blueButton" />
+        app:layout_constraintStart_toEndOf="@+id/paletteButton1"
+        app:layout_constraintTop_toTopOf="@+id/paletteButton3" />
 
     <com.etoitau.giftessera.domain.PaletteButton
-        android:id="@+id/yellowButton"
+        android:id="@+id/paletteButton1"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/color_button_bg_unselect"
-        android:contentDescription="@string/yellow_button"
+        android:contentDescription="@string/dwg_palette_1"
         android:onClick="colorClick"
-        android:src="@color/colorYellow"
-        android:tag="YELLOW"
+        android:scaleType="fitXY"
+        android:src="@drawable/whitepix"
+        android:tag="1"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/greenButton"
+        app:layout_constraintEnd_toStartOf="@+id/paletteButton2"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/orangeButton"
-        app:layout_constraintTop_toTopOf="@+id/greenButton" />
+        app:layout_constraintStart_toEndOf="@+id/paletteButton0"
+        app:layout_constraintTop_toTopOf="@+id/paletteButton2" />
 
     <com.etoitau.giftessera.domain.PaletteButton
-        android:id="@+id/orangeButton"
+        android:id="@+id/paletteButton0"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/color_button_bg_unselect"
-        android:contentDescription="@string/orange_button"
+        android:contentDescription="@string/dwg_palette_0"
         android:onClick="colorClick"
-        android:src="@color/colorOrange"
-        android:tag="ORANGE"
+        android:scaleType="fitXY"
+        android:src="@drawable/whitepix"
+        android:tag="0"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/yellowButton"
+        app:layout_constraintEnd_toStartOf="@+id/paletteButton1"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/redButton"
-        app:layout_constraintTop_toTopOf="@+id/yellowButton" />
+        app:layout_constraintStart_toEndOf="@+id/paletteLibraryButton"
+        app:layout_constraintTop_toTopOf="@+id/paletteButton1" />
 
     <com.etoitau.giftessera.domain.PaletteButton
-        android:id="@+id/redButton"
+        android:id="@+id/paletteLibraryButton"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/color_button_bg_unselect"
-        android:contentDescription="@string/red_button"
-        android:onClick="colorClick"
-        android:src="@color/colorRed"
-        android:tag="RED"
+        android:contentDescription="@string/color_library_button"
+        android:onClick="showColorLibraryClick"
+        android:scaleType="fitXY"
+        android:src="@drawable/paletteicon"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/orangeButton"
+        app:layout_constraintEnd_toStartOf="@+id/paletteButton0"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/orangeButton" />
+        app:layout_constraintTop_toTopOf="@+id/paletteButton0" />
 
 <!--    The DrawingBoard that shows/edits an animation frame-->
     <com.etoitau.giftessera.domain.DrawingBoard
@@ -244,4 +253,24 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.2" />
+
+    <!--    Pop up palette selector-->
+    <include
+        android:id="@+id/colorLibraryView"
+        layout="@layout/color_library"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/paletteLibraryButton"
+        app:layout_constraintEnd_toStartOf="@+id/whiteButton"
+        app:layout_constraintStart_toEndOf="@id/paletteLibraryButton"
+        app:layout_constraintTop_toTopOf="@+id/guideline" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

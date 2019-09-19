@@ -40,7 +40,7 @@ class DrawingBoard @JvmOverloads constructor(context: Context, attrs: AttributeS
         whiteBitmap(1, 1)
 
     private var paint: Paint = Paint()              // paint object for drawing bitmap
-    var color: ColorVal = BLACK             // current paint color, start with black
+    var color: ColorVal = BLACK             // current paint colorVal, start with black
 
 
     fun init(width: Int, height: Int, dpi: Int, startingFrame: Bitmap?) {
@@ -167,7 +167,7 @@ class DrawingBoard @JvmOverloads constructor(context: Context, attrs: AttributeS
 
     /**
      * take screen position from onTouchEvent, convert to source bitmap pixel location,
-     * and paint that pixel with current paint color
+     * and paint that pixel with current paint colorVal
      */
     private fun paintSquare(x: Float, y: Float) {
         val downX = min(max(0, floor(x / xScale).toInt()), srcBitmap.width - 1)

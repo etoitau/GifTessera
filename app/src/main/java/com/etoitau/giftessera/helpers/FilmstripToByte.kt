@@ -60,7 +60,7 @@ fun whiteBitmap(width: Int, height: Int): Bitmap {
 }
 
 /**
- * return what pixels to paint and what color to turn start bitmap into end
+ * return what pixels to paint and what colorVal to turn start bitmap into end
  */
 fun diffFrame(start: Bitmap, end: Bitmap): MutableList<Byte> {
     val output = mutableListOf<Byte>()
