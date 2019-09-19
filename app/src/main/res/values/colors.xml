@@ -1,16 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--colorVal for use in layout-->
-<!--these are consistent with palette in ColorVal enum-->
+
 <resources>
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
     <color name="colorRed">#FF0000</color>
-    <color name="colorOrange">#ff8000</color>
-    <color name="colorYellow">#ffff00</color>
-    <color name="colorGreen">#008000</color>
-    <color name="colorBlue">#0000ff</color>
-    <color name="colorPurple">#800080</color>
     <color name="colorBlack">#000000</color>
     <color name="colorGray">#808080</color>
     <color name="colorWhite">#FFFFFF</color>

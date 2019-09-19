@@ -3,45 +3,55 @@ package com.etoitau.giftessera.domain
 import com.etoitau.giftessera.MainActivity
 import com.etoitau.giftessera.domain.ColorVal.*
 
+/**
+ * Object for managing library of available palettes of colors
+ */
 class PaletteManager constructor(mainActivity: MainActivity) {
-    val classicColors = listOf(RED, ORANGE, YELLOW, GREEN, BLUE, PURPLE, BLACK)
-    val pastelColors = listOf(MAUVELOUS, DESERT_SAND, COOKIES_CREAM, TURQUOISE_GREEN, BABY_BLUE, VODKA, GRAY219)
-    val grayColors = listOf(BLACK, GRAY36, GRAY73, GRAY109, GRAY146, GRAY182, GRAY219)
-    val fleshColors = listOf(BROWN_COFFEE, GARNET, BROWN_SUGAR, DEER, TUMBLEWEED, PEARL, MISTY_ROSE)
-    val warmColors = listOf(WARM31, WARM63, WARM95, WARM127, WARM159, WARM191, WARM223)
-    val coolColors = listOf(COOLGG, COOLGB, COOLBG, COOLLB, COOLDB, COOLPB, COOLPP)
-    val colorLibrary = mutableListOf(classicColors, pastelColors, grayColors,
+    // initialize sets of colors, each is a palette user can pick to draw with
+    private val classicColors = listOf(RED, ORANGE, YELLOW, GREEN, BLUE, PURPLE, BLACK)
+    private val pastelColors = listOf(MAUVELOUS, DESERT_SAND, COOKIES_CREAM, TURQUOISE_GREEN, BABY_BLUE, VODKA, GRAY219)
+    private val grayColors = listOf(BLACK, GRAY36, GRAY73, GRAY109, GRAY146, GRAY182, GRAY219)
+    private val fleshColors = listOf(BROWN_COFFEE, GARNET, BROWN_SUGAR, DEER, TUMBLEWEED, PEARL, MISTY_ROSE)
+    private val warmColors = listOf(WARM31, WARM63, WARM95, WARM127, WARM159, WARM191, WARM223)
+    private val coolColors = listOf(COOLGG, COOLGB, COOLBG, COOLLB, COOLDB, COOLPB, COOLPP)
+    // collection of sets of colors
+    private val colorLibrary = mutableListOf(classicColors, pastelColors, grayColors,
         fleshColors, warmColors, coolColors)
 
-    val drawingPalette = mutableListOf<PaletteButton>()
+    // holds set of buttons at bottom of screen - the drawing palette
+    private val drawingPalette = mutableListOf<PaletteButton>()
 
-    val classicPalette = mutableListOf<PaletteButton>()
-    val grayPalette = mutableListOf<PaletteButton>()
-    val pastelPalette = mutableListOf<PaletteButton>()
-    val fleshPalette = mutableListOf<PaletteButton>()
-    val warmPalette = mutableListOf<PaletteButton>()
-    val coolPalette = mutableListOf<PaletteButton>()
-    val paletteLibrary = mutableListOf(classicPalette, grayPalette,
-        pastelPalette, fleshPalette, warmPalette, coolPalette)
+    // sets of buttons for each palette in library
+    private val classicPalette = mutableListOf<PaletteButton>()
+    private val grayPalette = mutableListOf<PaletteButton>()
+    private val pastelPalette = mutableListOf<PaletteButton>()
+    private val fleshPalette = mutableListOf<PaletteButton>()
+    private val warmPalette = mutableListOf<PaletteButton>()
+    private val coolPalette = mutableListOf<PaletteButton>()
+    private val paletteLibrary = mutableListOf(
+        classicPalette, grayPalette, pastelPalette, fleshPalette, warmPalette, coolPalette)
 
 
+    /**
+     * On creation, find all the buttons and assign colors to them
+     */
     init {
-
         val r = mainActivity.resources
         // fill list of drawing buttons, these always show on bottom row
         // initialize to classic colors
-        var idString: String = "paletteButton%d"
+        var idString = "paletteButton%d"
         for (i in 0 until 7) {
             drawingPalette.add(mainActivity.findViewById(
                 r.getIdentifier(String.format(idString, i), "id", mainActivity.packageName)))
             drawingPalette[i].colorVal = classicColors[i]
         }
+
         // fill and initialize sets of buttons to show user so they can pick palette
         idString = "paletteButton%d_%d"
         // for each palette
         for (i in 0 until paletteLibrary.size) {
             // for each color in palette
-            for (j in 0 until classicColors.size) {
+            for (j in classicColors.indices) {
                 paletteLibrary[i].add(mainActivity.findViewById(
                     r.getIdentifier(String.format(idString, i, j), "id", mainActivity.packageName)))
                 paletteLibrary[i][j].colorVal = colorLibrary[i][j]
@@ -61,17 +71,4 @@ class PaletteManager constructor(mainActivity: MainActivity) {
         }
         drawingPalette[colorIndex].setSelected()
     }
-
-//    fun paletteLibraryVisibility(value: Int) {
-//        if (value != View.GONE && value != View.VISIBLE && value != View.INVISIBLE) {
-//            return
-//        }
-//        for (palette in paletteLibrary) {
-//            for (button in palette) {
-//                button.visibility = value
-//            }
-//        }
-//    }
-
-
 }

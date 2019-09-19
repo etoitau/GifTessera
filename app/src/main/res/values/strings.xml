@@ -11,15 +11,18 @@
     <string name="play_button">Play Button</string>
     <string name="add_frame_button">Add or Insert Frame Button</string>
     <string name="del_frame_button">Delete Frame Button</string>
-    <string name="red_button">Red Button</string>
-    <string name="orange_button">Orange Button</string>
-    <string name="yellow_button">Yellow Button</string>
-    <string name="green_button">Green Button</string>
-    <string name="blue_button">Blue Button</string>
-    <string name="purple_button">Purple Button</string>
+    <string name="dwg_palette_6">Drawing Palette 6</string>
+    <string name="dwg_palette_5">Drawing Palette 5</string>
+    <string name="dwg_palette_4">Drawing Palette 4</string>
+    <string name="dwg_palette_3">Drawing Palette 3</string>
+    <string name="dwg_palette_2">Drawing Palette 2</string>
+    <string name="dwg_palette_1">Drawing Palette 1</string>
+    <string name="dwg_palette_0">Drawing Palette 0</string>
+    <string name="color_library_button">Color Library Button</string>
+
+<!--    Color buttons-->
     <string name="white_button">White Button</string>
-    <string name="gray_button">Gray Button</string>
-    <string name="black_button">Black Button</string>
+
 
 <!--    Alert text-->
     <string name="alert_delete_frame_title">Confirm Delete Current Frame</string>

@@ -162,7 +162,6 @@ class MainActivity : AppCompatActivity() {
      */
     fun colorClick(view: View) {
         if (view is PaletteButton) {
-            Log.i("clicked", view.colorVal.toString())
             drawingBoard.color = view.colorVal
             view.setSelected()
         }
@@ -591,10 +590,16 @@ class MainActivity : AppCompatActivity() {
         updateTitle()
     }
 
+    // Toggle visibility of color library
     fun showColorLibraryClick(view: View) {
         colorLibraryView.visibility = if (colorLibraryView.visibility == View.GONE) View.VISIBLE else View.GONE
     }
 
+    /**
+     * When user picks color from library:
+     * dismiss library, tell palette manager to put this palette in drawing row,
+     * set drawing color in DrawingBoard
+     */
     fun libraryClick(view: View) {
         colorLibraryView.visibility = View.GONE
         if (view is PaletteButton) {
