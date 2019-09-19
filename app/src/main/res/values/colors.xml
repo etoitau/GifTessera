@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--color for use in layout-->
+<!--colorVal for use in layout-->
 <!--these are consistent with palette in ColorVal enum-->
 <resources>
     <color name="colorPrimary">#008577</color>

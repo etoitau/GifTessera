@@ -8,7 +8,7 @@ import com.etoitau.giftessera.R
 
 
 /**
- * Custom View for user to pick paint color
+ * Custom View for user to pick paint colorVal
  * extends ImageButton
  * Adds ability to show it selected and all others of same type unselected when touched
  * Also converts xml tag value to ColorVal object for programmatic use
@@ -18,7 +18,11 @@ class PaletteButton: ImageButton {
     constructor(context: Context, attrs: AttributeSet): super(context, attrs)
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int): super(context, attrs, defStyleAttr)
 
-    var color: ColorVal = ColorVal.valueOf(this.tag.toString())
+    var colorVal: ColorVal = ColorVal.WHITE
+        set(value) {
+            field = value
+            updateColor(value)
+        }
 
     // set all sibling PaletteButtons (and self) to unselected, then set self to selected
     fun setSelected() {
@@ -38,5 +42,10 @@ class PaletteButton: ImageButton {
     // sets border to light gray (indicating unselected
     fun setUnselected() {
         this.setBackgroundResource(R.drawable.color_button_bg_unselect)
+    }
+
+    private fun updateColor(value: ColorVal) {
+        //setImageResource(R.color.colorWhite)
+        this.setColorFilter(colorVal.value)
     }
 }

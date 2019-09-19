@@ -24,9 +24,9 @@ public class AnimatedGifEncoder {
 	  
 	  protected int y = 0;
 
-	  protected int transparent = -1; // transparent color if given
+	  protected int transparent = -1; // transparent colorVal if given
 
-	  protected int transIndex; // transparent index in color table
+	  protected int transIndex; // transparent index in colorVal table
 
 	  protected int repeat = -1; // no repeat
 
@@ -48,7 +48,7 @@ public class AnimatedGifEncoder {
 
 	  protected boolean[] usedEntry = new boolean[256]; // active palette entries
 
-	  protected int palSize = 7; // color table size (bits-1)
+	  protected int palSize = 7; // colorVal table size (bits-1)
 
 	  protected int dispose = -1; // disposal code (-1 = use default)
 
@@ -73,7 +73,7 @@ public class AnimatedGifEncoder {
 
 	  /**
 	   * Sets the GIF frame disposal code for the last added frame and any
-	   * subsequent frames. Default is 0 if no transparent color has been set,
+	   * subsequent frames. Default is 0 if no transparent colorVal has been set,
 	   * otherwise 2.
 	   * 
 	   * @param code
@@ -101,11 +101,11 @@ public class AnimatedGifEncoder {
 	  }
 
 	  /**
-	   * Sets the transparent color for the last added frame and any subsequent
+	   * Sets the transparent colorVal for the last added frame and any subsequent
 	   * frames. Since all colors are subject to modification in the quantization
-	   * process, the color in the final palette for each frame closest to the given
-	   * color becomes the transparent color for that frame. May be set to null to
-	   * indicate no transparent color.
+	   * process, the colorVal in the final palette for each frame closest to the given
+	   * colorVal becomes the transparent colorVal for that frame. May be set to null to
+	   * indicate no transparent colorVal.
 	   * 
 	   * @param c
 	   *          Color to be treated as transparent on display.
@@ -137,10 +137,10 @@ public class AnimatedGifEncoder {
 	      }
 	      image = im;
 	      getImagePixels(); // convert to correct format if necessary
-	      analyzePixels(); // build color table & map pixels
+	      analyzePixels(); // build colorVal table & map pixels
 	      if (firstFrame) {
 	        writeLSD(); // logical screen descriptior
-	        writePalette(); // global color table
+	        writePalette(); // global colorVal table
 	        if (repeat >= 0) {
 	          // use NS app extension to indicate reps
 	          writeNetscapeExt();
@@ -149,7 +149,7 @@ public class AnimatedGifEncoder {
 	      writeGraphicCtrlExt(); // write graphic control extension
 	      writeImageDesc(); // image descriptor
 	      if (!firstFrame) {
-	        writePalette(); // local color table
+	        writePalette(); // local colorVal table
 	      }
 	      writePixels(); // encode and write pixel data
 	      firstFrame = false;
@@ -206,10 +206,10 @@ public class AnimatedGifEncoder {
 	  }
 
 	  /**
-	   * Sets quality of color quantization (conversion of images to the maximum 256
+	   * Sets quality of colorVal quantization (conversion of images to the maximum 256
 	   * colors allowed by the GIF specification). Lower values (minimum = 1)
 	   * produce better colors, but slow processing significantly. 10 is the
-	   * default, and produces good color mapping at reasonable speeds. Values
+	   * default, and produces good colorVal mapping at reasonable speeds. Values
 	   * greater than 20 do not yield significant improvements in speed.
 	   * 
 	   * @param quality
@@ -278,7 +278,7 @@ public class AnimatedGifEncoder {
 	  }
 
 	  /**
-	   * Analyzes image colors and creates color map.
+	   * Analyzes image colors and creates colorVal map.
 	   */
 	  protected void analyzePixels() {
 	    int len = pixels.length;
@@ -304,14 +304,14 @@ public class AnimatedGifEncoder {
 	    pixels = null;
 	    colorDepth = 8;
 	    palSize = 7;
-	    // get closest match to transparent color if specified
+	    // get closest match to transparent colorVal if specified
 	    if (transparent != -1) {
 	      transIndex = findClosest(transparent);
 	    }
 	  }
 
 	  /**
-	   * Returns index of palette color closest to c
+	   * Returns index of palette colorVal closest to c
 	   * 
 	   */
 	  protected int findClosest(int c) {
@@ -383,7 +383,7 @@ public class AnimatedGifEncoder {
 	      disp = 0; // dispose = no action
 	    } else {
 	      transp = 1;
-	      disp = 2; // force clear if using transparent color
+	      disp = 2; // force clear if using transparent colorVal
 	    }
 	    if (dispose >= 0) {
 	      disp = dispose & 7; // user override
@@ -397,7 +397,7 @@ public class AnimatedGifEncoder {
 	        transp); // 8 transparency flag
 
 	    writeShort(delay); // delay x 1/100 sec
-	    out.write(transIndex); // transparent color index
+	    out.write(transIndex); // transparent colorVal index
 	    out.write(0); // block terminator
 	  }
 
@@ -416,11 +416,11 @@ public class AnimatedGifEncoder {
 	      out.write(0);
 	    } else {
 	      // specify normal LCT
-	      out.write(0x80 | // 1 local color table 1=yes
+	      out.write(0x80 | // 1 local colorVal table 1=yes
 	          0 | // 2 interlace - 0=no
 	          0 | // 3 sorted - 0=no
 	          0 | // 4-5 reserved
-	          palSize); // 6-8 size of color table
+	          palSize); // 6-8 size of colorVal table
 	    }
 	  }
 
@@ -432,12 +432,12 @@ public class AnimatedGifEncoder {
 	    writeShort(width);
 	    writeShort(height);
 	    // packed fields
-	    out.write((0x80 | // 1 : global color table flag = 1 (gct used)
-	        0x70 | // 2-4 : color resolution = 7
+	    out.write((0x80 | // 1 : global colorVal table flag = 1 (gct used)
+	        0x70 | // 2-4 : colorVal resolution = 7
 	        0x00 | // 5 : gct sort flag = 0
 	        palSize)); // 6-8 : gct size
 
-	    out.write(0); // background color index
+	    out.write(0); // background colorVal index
 	    out.write(0); // pixel aspect ratio - assume 1:1
 	  }
 
@@ -456,7 +456,7 @@ public class AnimatedGifEncoder {
 	  }
 
 	  /**
-	   * Writes color table
+	   * Writes colorVal table
 	   */
 	  protected void writePalette() throws IOException {
 	    out.write(colorTab, 0, colorTab.length);

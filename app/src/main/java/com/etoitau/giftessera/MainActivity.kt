@@ -37,6 +37,7 @@ class MainActivity : AppCompatActivity() {
     var isPeeking = false                   // currently in peek view mode
     private lateinit var toast: Toast               // reusable toast object
     private var toastOffset: Int = 50
+    private lateinit var paletteManager: PaletteManager // object for managing library of palettes
 
     companion object {
         // recovering save state
@@ -129,6 +130,9 @@ class MainActivity : AppCompatActivity() {
 
         // put current app version in About display
         versionTextView.text = BuildConfig.VERSION_NAME
+
+        // create PaletteManager
+        paletteManager = PaletteManager(this)
     }
 
     /**
@@ -153,15 +157,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * When user clicks a color button, set that as paint color in the DrawingBoard
+     * When user clicks a colorVal button, set that as paint colorVal in the DrawingBoard
      * and add border to indicate it is selected
      */
     fun colorClick(view: View) {
         if (view is PaletteButton) {
-            Log.i("clicked", view.color.toString())
-            drawingBoard.color = view.color
+            Log.i("clicked", view.colorVal.toString())
+            drawingBoard.color = view.colorVal
             view.setSelected()
         }
+        // dismiss palette selection if active, they changed their mind
+        colorLibraryView.visibility = View.GONE
     }
 
     fun clickNext(view: View) {
@@ -583,5 +589,17 @@ class MainActivity : AppCompatActivity() {
     fun dismissAbout(view: View) {
         aboutDisplay.visibility = View.GONE
         updateTitle()
+    }
+
+    fun showColorLibraryClick(view: View) {
+        colorLibraryView.visibility = if (colorLibraryView.visibility == View.GONE) View.VISIBLE else View.GONE
+    }
+
+    fun libraryClick(view: View) {
+        colorLibraryView.visibility = View.GONE
+        if (view is PaletteButton) {
+            paletteManager.swapTo(view)
+            drawingBoard.color = view.colorVal
+        }
     }
 }
