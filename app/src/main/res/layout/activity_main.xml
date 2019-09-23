@@ -273,6 +273,7 @@
         app:layout_constraintStart_toEndOf="@id/paletteLibraryButton"
         app:layout_constraintTop_toTopOf="@+id/guideline" />
 
+<!--    Imitation Toast (bread) for showing messages-->
     <TextView
         android:id="@+id/bread"
         android:layout_width="wrap_content"
