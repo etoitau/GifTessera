@@ -19,6 +19,7 @@
     <string name="dwg_palette_1">Drawing Palette 1</string>
     <string name="dwg_palette_0">Drawing Palette 0</string>
     <string name="color_library_button">Color Library Button</string>
+    <string name="screen_description">transparent screen to catch click</string>
 
 <!--    Color buttons-->
     <string name="white_button">White Button</string>
