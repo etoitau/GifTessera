@@ -26,7 +26,7 @@ class DrawingBoard @JvmOverloads constructor(context: Context, attrs: AttributeS
         const val GRIDLINE_T: Int = 2                 // thickness of gridlines in pixels
     }
 
-    var editable: Boolean = true            // if animation is being shown, don't want to allow editing
+    var editable: Boolean = true            // can set drawing to not be editable via this
 
     var boardWidth: Int = 1
     var boardHeight: Int = 1
