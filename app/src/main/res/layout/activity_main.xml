@@ -7,6 +7,79 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <!--    Top row from left corner-->
+    <LinearLayout
+        android:id="@+id/topRow"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+        <ImageButton
+            android:id="@+id/prevButton"
+            android:layout_height="match_parent"
+            android:layout_width="55dp"
+            android:contentDescription="@string/prev_frame_button"
+            android:onClick="clickPrev"
+            app:srcCompat="@android:drawable/ic_media_previous" />
+
+        <ImageButton
+            android:id="@+id/nextButton"
+            android:layout_height="match_parent"
+            android:layout_width="55dp"
+            android:contentDescription="@string/next_frame_button"
+            android:onClick="clickNext"
+            app:srcCompat="@android:drawable/ic_media_next" />
+
+        <ImageButton
+            android:id="@+id/playButton"
+            android:layout_height="match_parent"
+            android:layout_width="55dp"
+            android:contentDescription="@string/play_button"
+            android:onClick="clickPlay"
+            app:srcCompat="@android:drawable/ic_media_play" />
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <ImageButton
+            android:id="@+id/panButton"
+            android:layout_height="match_parent"
+            android:layout_width="55dp"
+            android:contentDescription="@string/pan_button"
+            android:onClick="clickPan"
+            android:scaleType="fitXY"
+            app:srcCompat="@drawable/move" />
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <ImageButton
+            android:id="@+id/deleteButton"
+            android:layout_height="match_parent"
+            android:layout_width="55dp"
+            android:contentDescription="@string/del_frame_button"
+            android:onClick="clickDelete"
+            app:srcCompat="@android:drawable/ic_delete" />
+
+        <ImageButton
+            android:id="@+id/addButton"
+            android:layout_height="match_parent"
+            android:layout_width="55dp"
+            android:contentDescription="@string/add_frame_button"
+            android:onClick="clickAdd"
+            app:srcCompat="@android:drawable/ic_input_add" />
+
+
+
+
+    </LinearLayout>
+
 <!--    Bottom row of buttons from right to left-->
     <ImageButton
         android:id="@+id/peekButton"
@@ -174,67 +247,12 @@
         app:layout_constraintBottom_toTopOf="@+id/peekButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/prevButton" />
-
-<!--    Top row from left corner-->
-    <ImageButton
-        android:id="@+id/prevButton"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:contentDescription="@string/prev_frame_button"
-        android:onClick="clickPrev"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/ic_media_previous" />
-
-    <ImageButton
-        android:id="@+id/nextButton"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:contentDescription="@string/next_frame_button"
-        android:onClick="clickNext"
-        app:layout_constraintBottom_toBottomOf="@+id/prevButton"
-        app:layout_constraintStart_toEndOf="@+id/prevButton"
-        app:layout_constraintTop_toTopOf="@+id/prevButton"
-        app:srcCompat="@android:drawable/ic_media_next" />
-
-    <ImageButton
-        android:id="@+id/playButton"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:contentDescription="@string/play_button"
-        android:onClick="clickPlay"
-        app:layout_constraintBottom_toBottomOf="@+id/prevButton"
-        app:layout_constraintStart_toEndOf="@+id/nextButton"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/ic_media_play" />
-
-<!--    Top row from right corner-->
-    <ImageButton
-        android:id="@+id/addButton"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:contentDescription="@string/add_frame_button"
-        android:onClick="clickAdd"
-        app:layout_constraintBottom_toBottomOf="@+id/prevButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/ic_input_add" />
-
-    <ImageButton
-        android:id="@+id/deleteButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/del_frame_button"
-        android:onClick="clickDelete"
-        app:layout_constraintBottom_toBottomOf="@+id/addButton"
-        app:layout_constraintEnd_toStartOf="@+id/addButton"
-        app:layout_constraintTop_toTopOf="@+id/addButton"
-        app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@android:drawable/ic_delete" />
+        app:layout_constraintTop_toBottomOf="@+id/topRow" />
 
 
-<!--    Help display that pops up when selected from menu-->
+
+
+    <!--    Help display that pops up when selected from menu-->
     <include
         android:id="@+id/helpDisplay"
         layout="@layout/help_display"
@@ -272,5 +290,8 @@
         app:layout_constraintEnd_toStartOf="@+id/whiteButton"
         app:layout_constraintStart_toEndOf="@id/paletteLibraryButton"
         app:layout_constraintTop_toTopOf="@+id/guideline" />
+
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -6,6 +6,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.PorterDuff
 import android.net.Uri
 import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
@@ -161,6 +162,7 @@ class MainActivity : AppCompatActivity() {
      * and add border to indicate it is selected
      */
     fun colorClick(view: View) {
+        disablePan()
         if (view is PaletteButton) {
             drawingBoard.color = view.colorVal
             view.setSelected()
@@ -177,6 +179,15 @@ class MainActivity : AppCompatActivity() {
     fun clickPrev(view: View) {
         drawSession.getPrev()
         updateTitle()
+    }
+
+    fun clickPan(view: View) {
+        if (!drawingBoard.panMode) {
+            panButton.setColorFilter(ColorVal.GRAY219.value, PorterDuff.Mode.DARKEN)
+            drawingBoard.panMode = true
+        } else {
+            disablePan()
+        }
     }
 
     fun clickDelete(view: View) {
@@ -274,6 +285,7 @@ class MainActivity : AppCompatActivity() {
 
     // when menu item is clicked on
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        disablePan()
         val status = super.onOptionsItemSelected(item)
         // show appropriate confirmation
         when (item.itemId) {
@@ -592,6 +604,7 @@ class MainActivity : AppCompatActivity() {
 
     // Toggle visibility of color library
     fun showColorLibraryClick(view: View) {
+        disablePan()
         colorLibraryView.visibility = if (colorLibraryView.visibility == View.GONE) View.VISIBLE else View.GONE
     }
 
@@ -606,5 +619,10 @@ class MainActivity : AppCompatActivity() {
             paletteManager.swapTo(view)
             drawingBoard.color = view.colorVal
         }
+    }
+
+    fun disablePan() {
+        drawingBoard.panMode = false
+        panButton.colorFilter = null
     }
 }
