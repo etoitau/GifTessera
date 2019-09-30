@@ -6,7 +6,6 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import com.etoitau.giftessera.domain.ColorVal.BLACK
@@ -144,7 +143,8 @@ class DrawingBoard @JvmOverloads constructor(context: Context, attrs: AttributeS
     }
 
     /**
-     * when user touches the board, paint touched squares
+     * when user touches the board, either paint the touched squares or
+     * pan the image depending on edit mode
      */
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -173,14 +173,18 @@ class DrawingBoard @JvmOverloads constructor(context: Context, attrs: AttributeS
             // if pan mode
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
+                    // note source pixel finger starts at
                     startPanX = toSrcX(x)
                     startPanY = toSrcY(y)
                 }
                 MotionEvent.ACTION_MOVE -> {
+                    // what source pixel are they currently on
                     val newX = toSrcX(x)
                     val newY = toSrcY(y)
                     if (newX != startPanX || newY != startPanY) {
+                        // if they've moved far enough, pan image accordingly
                         panSrc(newX - startPanX, newY - startPanY)
+                        // and reset for next move
                         startPanX = newX
                         startPanY = newY
                         invalidate()
@@ -203,8 +207,13 @@ class DrawingBoard @JvmOverloads constructor(context: Context, attrs: AttributeS
         srcBitmap.setPixel(toSrcX(x), toSrcY(y), color.value)
     }
 
+    /**
+     * Move the whole image by x and y. Image will wrap - pixels that go off one side appear on other
+     */
     private fun panSrc(x: Int, y: Int) {
+        // get copy of starting point for reference
         val oldBitmap = srcBitmap.copy(srcBitmap.config, true)
+        // move each pixel. note (x + i + width) % width achieves wrapping behavior
         for (i in 0 until oldBitmap.width) {
             for (j in 0 until oldBitmap.height) {
                 srcBitmap.setPixel((srcBitmap.width + x + i) % srcBitmap.width,
@@ -213,6 +222,7 @@ class DrawingBoard @JvmOverloads constructor(context: Context, attrs: AttributeS
             }
         }
     }
+
     /**
      * Convert screen position to corresponding source bitmap pixel location
      */

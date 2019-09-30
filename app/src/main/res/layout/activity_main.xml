@@ -74,10 +74,6 @@
             android:contentDescription="@string/add_frame_button"
             android:onClick="clickAdd"
             app:srcCompat="@android:drawable/ic_input_add" />
-
-
-
-
     </LinearLayout>
 
 <!--    Bottom row of buttons from right to left-->
@@ -249,9 +245,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/topRow" />
 
-
-
-
     <!--    Help display that pops up when selected from menu-->
     <include
         android:id="@+id/helpDisplay"
@@ -290,8 +283,5 @@
         app:layout_constraintEnd_toStartOf="@+id/whiteButton"
         app:layout_constraintStart_toEndOf="@id/paletteLibraryButton"
         app:layout_constraintTop_toTopOf="@+id/guideline" />
-
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

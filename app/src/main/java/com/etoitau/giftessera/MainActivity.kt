@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity() {
                 recoveredID = savedInstanceState.getInt(SAVE_ID)
                 recoveredName = savedInstanceState.getString(SAVE_NAME)
                 wasPortrait = savedInstanceState.getBoolean(SAVE_IS_PORTRAIT)
-                val savedStripString = savedInstanceState.getString(Companion.SAVE_STRIP)
+                val savedStripString = savedInstanceState.getString(SAVE_STRIP)
                 recoveredIndex = savedInstanceState.getInt(SAVE_FRAME_NUMBER)
                 if (savedStripString != null) {
                     recoveredFilmstrip = toFilmstrip(savedStripString.toByteArray(StandardCharsets.ISO_8859_1))
@@ -142,7 +142,7 @@ class MainActivity : AppCompatActivity() {
     override fun onSaveInstanceState(outState: Bundle?) {
         try{
             outState?.run {
-                putString(Companion.SAVE_STRIP, String(toByte(drawSession.filmStrip)!!, StandardCharsets.ISO_8859_1))
+                putString(SAVE_STRIP, String(toByte(drawSession.filmStrip)!!, StandardCharsets.ISO_8859_1))
                 putInt(SAVE_FRAME_NUMBER, drawSession.filmIndex)
                 putBoolean(SAVE_IS_PORTRAIT, drawingBoard.isPortrait)
                 if (drawSession.saveId != null && drawSession.saveName != null) {
@@ -162,11 +162,14 @@ class MainActivity : AppCompatActivity() {
      * and add border to indicate it is selected
      */
     fun colorClick(view: View) {
+        // if click color, pan mode is no longer desired
         disablePan()
+
         if (view is PaletteButton) {
             drawingBoard.color = view.colorVal
             view.setSelected()
         }
+
         // dismiss palette selection if active, they changed their mind
         colorLibraryView.visibility = View.GONE
     }
@@ -181,6 +184,10 @@ class MainActivity : AppCompatActivity() {
         updateTitle()
     }
 
+    /**
+     * button to engage pan edit mode
+     * set drawing board to pan mode and shade button to indicate mode is active
+     */
     fun clickPan(view: View) {
         if (!drawingBoard.panMode) {
             panButton.setColorFilter(ColorVal.GRAY219.value, PorterDuff.Mode.DARKEN)
@@ -285,7 +292,9 @@ class MainActivity : AppCompatActivity() {
 
     // when menu item is clicked on
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // if going into menu, we can can say they're done panning
         disablePan()
+
         val status = super.onOptionsItemSelected(item)
         // show appropriate confirmation
         when (item.itemId) {
@@ -621,7 +630,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun disablePan() {
+    /**
+     * function to ensure pan mode is disabled (putting us back in drawing mode)
+     */
+    private fun disablePan() {
         drawingBoard.panMode = false
         panButton.colorFilter = null
     }

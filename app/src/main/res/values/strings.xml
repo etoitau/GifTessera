@@ -19,6 +19,7 @@
     <string name="dwg_palette_1">Drawing Palette 1</string>
     <string name="dwg_palette_0">Drawing Palette 0</string>
     <string name="color_library_button">Color Library Button</string>
+    <string name="pan_button">Pan Button</string>
 
 <!--    Color buttons-->
     <string name="white_button">White Button</string>
@@ -102,6 +103,5 @@
         by <a href="https://creativecommons.org/">Creative Commons</a>.
         But if you enjoy it and want to support my work,
         feel free to donate something <a href="https://www.paypal.me/etoitau">here</a>. Thanks!</string>
-    <string name="pan_button">Pan Button</string>
 
 </resources>
