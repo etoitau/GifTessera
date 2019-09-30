@@ -241,6 +241,7 @@ class MainActivity : AppCompatActivity() {
         if (view is ImageButton) {
             // if already running, stop
             if (drawSession.animationRunning) {
+                screenView.visibility = View.GONE
                 drawSession.animationTimer!!.cancel()
                 drawSession.animationRunning = false
                 drawingBoard.editable = true
@@ -250,8 +251,8 @@ class MainActivity : AppCompatActivity() {
                 updateTitle()
             } else {
                 // start
-                drawingBoard.editable = false
-                setButtonsActivated(false)
+                screenView.visibility = View.VISIBLE
+                screenView.setOnClickListener { clickPlay(view) }
                 playButton.setImageDrawable(ResourcesCompat
                     .getDrawable(resources, android.R.drawable.ic_menu_close_clear_cancel, null))
                 updateTitle(drawSession.filmStrip.size)
@@ -269,6 +270,9 @@ class MainActivity : AppCompatActivity() {
 
     // when menu item is clicked on
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // stop animation if it's running
+        if (drawSession.animationRunning) { clickPlay(playButton) }
+
         val status = super.onOptionsItemSelected(item)
         // show appropriate confirmation
         when (item.itemId) {

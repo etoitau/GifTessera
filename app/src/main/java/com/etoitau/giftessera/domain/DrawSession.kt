@@ -74,6 +74,11 @@ class DrawSession constructor(private val mainActivity: MainActivity, private va
         }
     }
 
+    fun getFrame(i: Int) {
+        filmIndex = max(0, min(filmStrip.lastIndex, i))
+        drawingBoard.setBitmap(filmStrip[filmIndex])
+    }
+
     /**
      * Insert new frame after current frame
      */
@@ -137,25 +142,16 @@ class DrawSession constructor(private val mainActivity: MainActivity, private va
 
 
     fun runAnimation(view: ImageButton) {
+        animationRunning = true
         drawingBoard.setBitmap(filmStrip[filmIndex])
         animationTimer = fixedRateTimer(null, false, DELAY, FRAME_DELAY) {
             (mainActivity as MainActivity).runOnUiThread {
                 if (filmIndex < filmStrip.lastIndex) {
                     // if not at end of animation yet
-                    animationRunning = true
                     getNext()
                 } else {
-                    // if at end of animation
-                    animationRunning = false
-                    view.setImageDrawable(ResourcesCompat.getDrawable(
-                        mainActivity.resources,
-                        android.R.drawable.ic_media_play,
-                        null))
-                    drawingBoard.editable = true
-                    // reactivate buttons
-                    mainActivity.setButtonsActivated(true)
-
-                    cancel()
+                    // if at end of animation, just showed last frame
+                    getFrame(0)
                 }
             }
         }
