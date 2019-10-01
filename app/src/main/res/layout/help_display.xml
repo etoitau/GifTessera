@@ -17,7 +17,7 @@
     <!--    The buttons-->
         <ImageButton
             android:id="@+id/prevButtonHelp"
-            android:layout_width="50dp"
+            android:layout_width="55dp"
             android:layout_height="50dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
@@ -26,10 +26,9 @@
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@android:drawable/ic_media_previous" />
 
-
         <ImageButton
             android:id="@+id/nextButtonHelp"
-            android:layout_width="50dp"
+            android:layout_width="55dp"
             android:layout_height="50dp"
             android:layout_marginTop="8dp"
             android:contentDescription="@string/next_frame_button"
@@ -38,28 +37,8 @@
             app:srcCompat="@android:drawable/ic_media_next" />
 
         <ImageButton
-            android:id="@+id/addButtonHelp"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginTop="8dp"
-            android:contentDescription="@string/add_frame_button"
-            app:layout_constraintStart_toStartOf="@+id/deleteButtonHelp"
-            app:layout_constraintTop_toBottomOf="@+id/deleteButtonHelp"
-            app:srcCompat="@android:drawable/ic_input_add" />
-
-        <ImageButton
-            android:id="@+id/deleteButtonHelp"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginTop="8dp"
-            android:contentDescription="@string/del_frame_button"
-            app:layout_constraintStart_toStartOf="@+id/playButtonHelp"
-            app:layout_constraintTop_toBottomOf="@+id/imageButton"
-            app:srcCompat="@android:drawable/ic_delete" />
-
-        <ImageButton
             android:id="@+id/playButtonHelp"
-            android:layout_width="50dp"
+            android:layout_width="55dp"
             android:layout_height="50dp"
             android:layout_marginTop="8dp"
             android:contentDescription="@string/play_button"
@@ -68,8 +47,8 @@
             app:srcCompat="@android:drawable/ic_media_play" />
 
         <ImageButton
-            android:id="@+id/imageButton"
-            android:layout_width="50dp"
+            android:id="@+id/stopButtonHelp"
+            android:layout_width="55dp"
             android:layout_height="50dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
@@ -77,6 +56,37 @@
             app:layout_constraintStart_toEndOf="@+id/playButtonHelp"
             app:layout_constraintTop_toBottomOf="@+id/playButtonHelp"
             app:srcCompat="@android:drawable/ic_menu_close_clear_cancel" />
+
+        <ImageButton
+            android:id="@+id/panButtonHelp"
+            android:layout_width="55dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="8dp"
+            android:contentDescription="@string/pan_button"
+            android:scaleType="fitXY"
+            app:layout_constraintStart_toStartOf="@+id/playButtonHelp"
+            app:layout_constraintTop_toBottomOf="@+id/stopButtonHelp"
+            app:srcCompat="@drawable/move" />
+
+        <ImageButton
+            android:id="@+id/deleteButtonHelp"
+            android:layout_width="55dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="8dp"
+            android:contentDescription="@string/del_frame_button"
+            app:layout_constraintStart_toStartOf="@+id/panButtonHelp"
+            app:layout_constraintTop_toBottomOf="@+id/panButtonHelp"
+            app:srcCompat="@android:drawable/ic_delete" />
+
+        <ImageButton
+            android:id="@+id/addButtonHelp"
+            android:layout_width="55dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="8dp"
+            android:contentDescription="@string/add_frame_button"
+            app:layout_constraintStart_toStartOf="@+id/deleteButtonHelp"
+            app:layout_constraintTop_toBottomOf="@+id/deleteButtonHelp"
+            app:srcCompat="@android:drawable/ic_input_add" />
 
         <ImageButton
             android:id="@+id/peekButtonHelp"
@@ -136,10 +146,23 @@
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:text="@string/stop_help_entry"
-            app:layout_constraintBottom_toBottomOf="@+id/imageButton"
+            app:layout_constraintBottom_toBottomOf="@+id/stopButtonHelp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/imageButton"
-            app:layout_constraintTop_toTopOf="@+id/imageButton"
+            app:layout_constraintStart_toEndOf="@+id/stopButtonHelp"
+            app:layout_constraintTop_toTopOf="@+id/stopButtonHelp"
+            android:clickable="true"/>
+
+        <TextView
+            android:id="@+id/textViewPan"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:text="@string/pan_help_text"
+            app:layout_constraintBottom_toBottomOf="@+id/panButtonHelp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/panButtonHelp"
+            app:layout_constraintTop_toTopOf="@+id/panButtonHelp"
             android:clickable="true"/>
 
         <TextView
