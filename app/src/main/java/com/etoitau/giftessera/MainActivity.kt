@@ -257,22 +257,28 @@ class MainActivity : AppCompatActivity() {
      */
     fun clickPlay(view: View) {
         if (view is ImageButton) {
-            // if already running, stop
             if (drawSession.animationRunning) {
+                // if already running, stop
+                // get rid of screen
+                screenView.visibility = View.GONE
+                // stop animation
                 drawSession.animationTimer!!.cancel()
                 drawSession.animationRunning = false
-                drawingBoard.editable = true
-                setButtonsActivated(true)
+                // reset button and title
                 playButton.setImageDrawable(ResourcesCompat
                     .getDrawable(resources, android.R.drawable.ic_media_play, null))
                 updateTitle()
             } else {
                 // start
-                drawingBoard.editable = false
-                setButtonsActivated(false)
+                // put up transparent screen over UI to catch any click and interpret as stop
+                screenView.visibility = View.VISIBLE
+                screenView.setOnClickListener { clickPlay(view) }
+                // change button to make clear ani is running and click will stop
                 playButton.setImageDrawable(ResourcesCompat
                     .getDrawable(resources, android.R.drawable.ic_menu_close_clear_cancel, null))
+                // set frame in title to last frame
                 updateTitle(drawSession.filmStrip.size)
+                // go to start then start animation
                 drawSession.filmIndex = 0
                 drawSession.runAnimation(view)
             }
@@ -287,6 +293,9 @@ class MainActivity : AppCompatActivity() {
 
     // when menu item is clicked on
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // stop animation if it's running
+        if (drawSession.animationRunning) { clickPlay(playButton) }
+      
         // if going into menu, we can can say they're done panning
         disablePan()
 
@@ -545,19 +554,6 @@ class MainActivity : AppCompatActivity() {
         val extStorageState: String = Environment.getExternalStorageState()
         return extStorageState.equals(Environment.MEDIA_MOUNTED) &&
                 !extStorageState.equals(Environment.MEDIA_MOUNTED_READ_ONLY)
-    }
-
-    /**
-     * When animation is running we don't want any of these buttons to be functional
-     * This sets then activated or not according to isActivated
-     */
-    fun setButtonsActivated(isActivated: Boolean) {
-        val buttons =
-            mutableListOf<ImageButton>(prevButton, nextButton, deleteButton, addButton, peekButton)
-        for (button in buttons) {
-            button.isEnabled = isActivated
-            button.isClickable = isActivated
-        }
     }
 
     private fun showHelp() {
