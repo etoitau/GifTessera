@@ -6,6 +6,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.PorterDuff
 import android.net.Uri
 import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
@@ -155,10 +156,14 @@ class MainActivity : AppCompatActivity() {
      * and add border to indicate it is selected
      */
     fun colorClick(view: View) {
+        // if click color, pan mode is no longer desired
+        disablePan()
+
         if (view is PaletteButton) {
             drawingBoard.color = view.colorVal
             view.setSelected()
         }
+
         // dismiss palette selection if active, they changed their mind
         colorLibraryView.visibility = View.GONE
     }
@@ -171,6 +176,19 @@ class MainActivity : AppCompatActivity() {
     fun clickPrev(view: View) {
         drawSession.getPrev()
         updateTitle()
+    }
+
+    /**
+     * button to engage pan edit mode
+     * set drawing board to pan mode and shade button to indicate mode is active
+     */
+    fun clickPan(view: View) {
+        if (!drawingBoard.panMode) {
+            panButton.setColorFilter(ColorVal.GRAY219.value, PorterDuff.Mode.DARKEN)
+            drawingBoard.panMode = true
+        } else {
+            disablePan()
+        }
     }
 
     fun clickDelete(view: View) {
@@ -277,6 +295,9 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // stop animation if it's running
         if (drawSession.animationRunning) { clickPlay(playButton) }
+      
+        // if going into menu, we can can say they're done panning
+        disablePan()
 
         val status = super.onOptionsItemSelected(item)
         // show appropriate confirmation
@@ -560,6 +581,7 @@ class MainActivity : AppCompatActivity() {
 
     // Toggle visibility of color library
     fun showColorLibraryClick(view: View) {
+        disablePan()
         colorLibraryView.visibility = if (colorLibraryView.visibility == View.GONE) View.VISIBLE else View.GONE
     }
 
@@ -574,5 +596,13 @@ class MainActivity : AppCompatActivity() {
             paletteManager.swapTo(view)
             drawingBoard.color = view.colorVal
         }
+    }
+
+    /**
+     * function to ensure pan mode is disabled (putting us back in drawing mode)
+     */
+    private fun disablePan() {
+        drawingBoard.panMode = false
+        panButton.colorFilter = null
     }
 }

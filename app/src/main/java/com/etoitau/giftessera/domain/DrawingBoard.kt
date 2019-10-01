@@ -26,13 +26,14 @@ class DrawingBoard @JvmOverloads constructor(context: Context, attrs: AttributeS
         const val GRIDLINE_T: Int = 2                 // thickness of gridlines in pixels
     }
 
-    var editable: Boolean = true            // can set drawing to not be editable via this
+    var editable = true                 // if animation is being shown, don't want to allow editing
+    var panMode = false                 // if should pan image instead of painting
 
     var boardWidth: Int = 1
     var boardHeight: Int = 1
-    var xScale: Int = 1                     // how many screen pixels should a drawing pixel take
+    var xScale: Int = 1                 // how many screen pixels should a drawing pixel take
     var yScale: Int = 1
-    private var dpi = 1                             // screen dpi to determine scale
+    private var dpi = 1                 // screen dpi to determine scale
     // orientation
     var isPortrait = true
 
@@ -41,6 +42,9 @@ class DrawingBoard @JvmOverloads constructor(context: Context, attrs: AttributeS
 
     private var paint: Paint = Paint()              // paint object for drawing bitmap
     var color: ColorVal = BLACK             // current paint colorVal, start with black
+
+    var startPanX: Int = 0                  // a pan operation needs to remember where the pan started
+    var startPanY: Int = 0
 
 
     fun init(width: Int, height: Int, dpi: Int, startingFrame: Bitmap?) {
@@ -139,7 +143,8 @@ class DrawingBoard @JvmOverloads constructor(context: Context, attrs: AttributeS
     }
 
     /**
-     * when user touches the board, paint touched squares
+     * when user touches the board, either paint the touched squares or
+     * pan the image depending on edit mode
      */
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -149,19 +154,48 @@ class DrawingBoard @JvmOverloads constructor(context: Context, attrs: AttributeS
         val x = event.x
         val y = event.y
 
-        when (event.action) {
-            MotionEvent.ACTION_DOWN -> {
-                paintSquare(x, y)
-                invalidate()
+        if (!panMode) {
+            // if normal painting mode
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    paintSquare(x, y)
+                    invalidate()
+                }
+                MotionEvent.ACTION_MOVE -> {
+                    paintSquare(x, y)
+                    invalidate()
+                }
+                MotionEvent.ACTION_UP -> {
+                    // none
+                }
             }
-            MotionEvent.ACTION_MOVE -> {
-                paintSquare(x, y)
-                invalidate()
-            }
-            MotionEvent.ACTION_UP -> {
-                // none
+        } else {
+            // if pan mode
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    // note source pixel finger starts at
+                    startPanX = toSrcX(x)
+                    startPanY = toSrcY(y)
+                }
+                MotionEvent.ACTION_MOVE -> {
+                    // what source pixel are they currently on
+                    val newX = toSrcX(x)
+                    val newY = toSrcY(y)
+                    if (newX != startPanX || newY != startPanY) {
+                        // if they've moved far enough, pan image accordingly
+                        panSrc(newX - startPanX, newY - startPanY)
+                        // and reset for next move
+                        startPanX = newX
+                        startPanY = newY
+                        invalidate()
+                    }
+                }
+                MotionEvent.ACTION_UP -> {
+                    // nothing
+                }
             }
         }
+
         return true
     }
 
@@ -170,9 +204,37 @@ class DrawingBoard @JvmOverloads constructor(context: Context, attrs: AttributeS
      * and paint that pixel with current paint colorVal
      */
     private fun paintSquare(x: Float, y: Float) {
-        val downX = min(max(0, floor(x / xScale).toInt()), srcBitmap.width - 1)
-        val downY = min(max(0, floor(y / yScale).toInt()), srcBitmap.height - 1)
-        srcBitmap.setPixel(downX, downY, color.value)
+        srcBitmap.setPixel(toSrcX(x), toSrcY(y), color.value)
+    }
+
+    /**
+     * Move the whole image by x and y. Image will wrap - pixels that go off one side appear on other
+     */
+    private fun panSrc(x: Int, y: Int) {
+        // get copy of starting point for reference
+        val oldBitmap = srcBitmap.copy(srcBitmap.config, true)
+        // move each pixel. note (x + i + width) % width achieves wrapping behavior
+        for (i in 0 until oldBitmap.width) {
+            for (j in 0 until oldBitmap.height) {
+                srcBitmap.setPixel((srcBitmap.width + x + i) % srcBitmap.width,
+                    (srcBitmap.height + y + j) % srcBitmap.height,
+                    oldBitmap.getPixel(i, j))
+            }
+        }
+    }
+
+    /**
+     * Convert screen position to corresponding source bitmap pixel location
+     */
+    private fun toSrcX(x: Float): Int {
+        return min(max(0, floor(x / xScale).toInt()), srcBitmap.width - 1)
+    }
+
+    /**
+     * Convert screen position to corresponding source bitmap pixel location
+     */
+    private fun toSrcY(y: Float): Int {
+        return min(max(0, floor(y / yScale).toInt()), srcBitmap.height - 1)
     }
 
     fun clearBoard() {
