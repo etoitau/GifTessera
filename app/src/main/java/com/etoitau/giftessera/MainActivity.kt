@@ -114,7 +114,7 @@ class MainActivity : AppCompatActivity() {
             drawSession = DrawSession(this@MainActivity, drawingBoard)
 
             if (newFilmstrip != null && recoveredIndex != null) {
-                drawSession.loadSaveState(newFilmstrip, recoveredIndex, recoveredID, recoveredName, isPortrait)
+                drawSession.loadSaveState(newFilmstrip, recoveredIndex, recoveredID, recoveredName)
                 this.updateTitle()
             }
 
@@ -359,6 +359,7 @@ class MainActivity : AppCompatActivity() {
         }
         val intent = Intent(this, FilesActivity::class.java)
         intent.putExtra("mode", FilesAdapter.SAVING)
+        intent.putExtra("name", drawSession.saveName)
         intent.putExtra("file", toByte(copyToSave))
         startActivityForResult(intent, CODE_SAVE)
     }
@@ -369,6 +370,7 @@ class MainActivity : AppCompatActivity() {
     private fun loadFromDB() {
         val intent = Intent(this, FilesActivity::class.java)
         intent.putExtra("mode", FilesAdapter.LOADING)
+        intent.putExtra("name", drawSession.saveName)
         startActivityForResult(intent, CODE_LOAD)
     }
 

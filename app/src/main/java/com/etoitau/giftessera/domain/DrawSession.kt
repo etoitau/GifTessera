@@ -188,7 +188,7 @@ class DrawSession constructor(private val mainActivity: MainActivity, private va
 
     }
 
-    fun loadSaveState(saveFilmstrip: MutableList<Bitmap>, frameNumber: Int, saveId: Int?, saveName: String?, isPortrait: Boolean) {
+    fun loadSaveState(saveFilmstrip: MutableList<Bitmap>, frameNumber: Int, saveId: Int?, saveName: String?) {
         this.saveId = saveId
         this.saveName = saveName
         filmStrip = saveFilmstrip

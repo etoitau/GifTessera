@@ -31,6 +31,8 @@ class FilesActivity : AppCompatActivity() {
     private lateinit var rvFiles: RecyclerView
     // FilesActivity mode, intent from MainActivity indicates what mode should be
     private var mode: Int = FilesAdapter.SAVING
+    // name of current project, if any
+    private var name: String? = null
     // file data as ByteArray provided by intent from MainActivity if appropriate
     private var toSave: ByteArray? = null
 
@@ -44,6 +46,7 @@ class FilesActivity : AppCompatActivity() {
             finish()
         } else {
             mode = intent.extras!!.getInt("mode")
+            name = intent.extras!!.getString("name")
         }
 
         // if LOADING mode, don't need UI for new save, and title should update
@@ -56,6 +59,7 @@ class FilesActivity : AppCompatActivity() {
             // if SAVING get file to save from intent
             toSave = intent.extras!!.getByteArray("file")
         }
+
 
         // set up RecyclerView and add dividing lines
         rvFiles = findViewById(R.id.recycleFileView)
@@ -154,6 +158,13 @@ class FilesActivity : AppCompatActivity() {
      * then delete
      */
     fun deleteFileAlert(databaseFile: DatabaseFile) {
+        if (databaseFile.name == name) {
+            // don't let user delete the current project,
+            //   when they go back it would look like it's still there
+            fileMessageView.visibility = View.VISIBLE
+            fileMessageView.text = getString(R.string.file_in_use)
+            return
+        }
         // delete save confirmation
         val builder = android.app.AlertDialog.Builder(this)
         builder.setTitle(R.string.alert_delete_save_title)
@@ -167,6 +178,8 @@ class FilesActivity : AppCompatActivity() {
             val index = fileList.indexOf(databaseFile)
             fileList.removeAt(index)
             filesAdapter.notifyItemRemoved(index)
+            // update drawing ui
+
         }
         builder.setNegativeButton(R.string.no_never_mind) { _, _ ->
             // nothing

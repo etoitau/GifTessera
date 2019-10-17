@@ -2,7 +2,7 @@
     <string name="app_name">GifTessera</string>
 <!--    Used in About display. This is set programmatically to
     actual versionName, but keep current here just in case-->
-    <string name="app_version">1.3</string>
+    <string name="app_version">1.3.1</string>
 
 <!--    Button names-->
     <string name="peek_button">Peek Button</string>
@@ -67,6 +67,7 @@
     <string name="missing_name">Please enter file name</string>
     <string name="existing_name">Name taken, please enter unique name, or tap the file you want to overwrite</string>
     <string name="no_data">No current data to save</string>
+    <string name="file_in_use">Can not delete. File in use.</string>
 
 <!--    Main Activity-->
     <string name="frame_added_after">Frame added after %d</string>
@@ -102,8 +103,6 @@
     <string name="license_is">GifTessera is free to use,
         <a href="https://github.com/etoitau/GifTessera">open source</a>,
         and is licensed <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>
-        by <a href="https://creativecommons.org/">Creative Commons</a>.
-        But if you enjoy it and want to support my work,
-        feel free to donate something <a href="https://www.paypal.me/etoitau">here</a>. Thanks!</string>
+        by <a href="https://creativecommons.org/">Creative Commons</a>.</string>
 
 </resources>
