@@ -101,7 +101,7 @@
     <string name="by">By</string>
     <string name="author"><a href="http://cs.kchatman.com/">Kyle Chatman</a></string>
     <string name="license">License</string>
-    <string name="license_is">Copyright 2019 Kyle Chatman. GifTessera is free to use,
+    <string name="license_is">Copyright 2019-2025 Kyle Chatman. GifTessera is free to use,
         <a href="https://github.com/etoitau/GifTessera">open source</a>,
         and is licensed under the
         <a href="https://www.gnu.org/licenses/gpl-3.0.txt">GNU General Public License v.3.0</a>

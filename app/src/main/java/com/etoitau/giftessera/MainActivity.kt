@@ -1,10 +1,7 @@
 package com.etoitau.giftessera
 
-import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.PorterDuff
 import android.net.Uri
@@ -17,14 +14,12 @@ import android.util.DisplayMetrics
 import android.util.Log
 import android.view.*
 import android.widget.ImageButton
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import com.etoitau.giftessera.domain.*
 import com.etoitau.giftessera.gifencoder.AnimatedGifEncoder
 import com.etoitau.giftessera.helpers.*
-import kotlinx.android.synthetic.main.about_display.*
-import kotlinx.android.synthetic.main.activity_main.*
+import com.etoitau.giftessera.databinding.AboutDisplayBinding
+import com.etoitau.giftessera.databinding.ActivityMainBinding
 import java.io.ByteArrayOutputStream
 import java.nio.charset.StandardCharsets
 
@@ -37,6 +32,9 @@ class MainActivity : AppCompatActivity() {
     var isPeeking = false                   // currently in peek view mode
     private lateinit var paletteManager: PaletteManager // object for managing library of palettes
     private lateinit var breadBox: BreadBox
+    private lateinit var mainBinding: ActivityMainBinding
+    private lateinit var aboutBinding: AboutDisplayBinding
+    private var savedInstanceState: Bundle? = null
 
     companion object {
         // recovering save state
@@ -50,13 +48,20 @@ class MainActivity : AppCompatActivity() {
         const val CODE_SAVE = 3
         const val CODE_LOAD = 5
         const val CODE_FILE = 7
-        const val CODE_PERM = 9
     }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        this.savedInstanceState = savedInstanceState
+        mainBinding = ActivityMainBinding.inflate(layoutInflater)
+        aboutBinding = AboutDisplayBinding.inflate(layoutInflater)
+        setContentView(mainBinding.root)
+
+        val drawingBoard = mainBinding.drawingBoard
+        val bread = mainBinding.bread
+        val versionTextView = aboutBinding.versionTextView
+        val windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
 
         // recover save state
         var recoveredIndex: Int? = null
@@ -127,18 +132,19 @@ class MainActivity : AppCompatActivity() {
         versionTextView.text = BuildConfig.VERSION_NAME
 
         // create PaletteManager
-        paletteManager = PaletteManager(this)
+        paletteManager = PaletteManager()
+        paletteManager.initialize(this)
     }
 
     /**
      * Save drawSession info so not lost on screen rotate or other event
      */
-    override fun onSaveInstanceState(outState: Bundle?) {
+    override fun onSaveInstanceState(outState: Bundle) {
         try{
-            outState?.run {
+            outState.run {
                 putString(SAVE_STRIP, String(toByte(drawSession.filmStrip)!!, StandardCharsets.ISO_8859_1))
                 putInt(SAVE_FRAME_NUMBER, drawSession.filmIndex)
-                putBoolean(SAVE_IS_PORTRAIT, drawingBoard.isPortrait)
+                putBoolean(SAVE_IS_PORTRAIT, mainBinding.drawingBoard.isPortrait)
                 if (drawSession.saveId != null && drawSession.saveName != null) {
                     putInt(SAVE_ID, drawSession.saveId!!)
                     putString(SAVE_NAME, drawSession.saveName)
@@ -160,12 +166,12 @@ class MainActivity : AppCompatActivity() {
         disablePan()
 
         if (view is PaletteButton) {
-            drawingBoard.color = view.colorVal
+            mainBinding.drawingBoard.color = view.colorVal
             view.setSelected()
         }
 
         // dismiss palette selection if active, they changed their mind
-        colorLibraryView.visibility = View.GONE
+        mainBinding.colorLibraryView.root.visibility = View.GONE
     }
 
     fun clickNext(view: View) {
@@ -183,9 +189,9 @@ class MainActivity : AppCompatActivity() {
      * set drawing board to pan mode and shade button to indicate mode is active
      */
     fun clickPan(view: View) {
-        if (!drawingBoard.panMode) {
-            panButton.setColorFilter(ColorVal.GRAY219.value, PorterDuff.Mode.DARKEN)
-            drawingBoard.panMode = true
+        if (! mainBinding.drawingBoard.panMode) {
+            mainBinding.panButton.setColorFilter(ColorVal.GRAY219.value, PorterDuff.Mode.DARKEN)
+            mainBinding.drawingBoard.panMode = true
         } else {
             disablePan()
         }
@@ -208,15 +214,15 @@ class MainActivity : AppCompatActivity() {
      * is depressed. Quick reference to the previous frame is important when composing animation
      */
     private fun setPeekListener() {
-        peekButton.setOnTouchListener(object: View.OnTouchListener {
+        mainBinding.peekButton.setOnTouchListener(object: View.OnTouchListener {
             override fun onTouch(view: View, event: MotionEvent): Boolean {
                 if (event.action == MotionEvent.ACTION_DOWN && drawSession.filmIndex > 0) {
                     isPeeking = true
                     drawSession.getPrev()
-                    drawingBoard.alpha = 0.7f
+                    mainBinding.drawingBoard.alpha = 0.7f
                     updateTitle()
                 } else if (event.action == MotionEvent.ACTION_UP && isPeeking) {
-                    drawingBoard.alpha = 1.0f
+                    mainBinding.drawingBoard.alpha = 1.0f
                     drawSession.getNext()
                     updateTitle()
                     isPeeking = false
@@ -260,21 +266,21 @@ class MainActivity : AppCompatActivity() {
             if (drawSession.animationRunning) {
                 // if already running, stop
                 // get rid of screen
-                screenView.visibility = View.GONE
+                mainBinding.screenView.visibility = View.GONE
                 // stop animation
                 drawSession.animationTimer!!.cancel()
                 drawSession.animationRunning = false
                 // reset button and title
-                playButton.setImageDrawable(ResourcesCompat
+                mainBinding.playButton.setImageDrawable(ResourcesCompat
                     .getDrawable(resources, android.R.drawable.ic_media_play, null))
                 updateTitle()
             } else {
                 // start
                 // put up transparent screen over UI to catch any click and interpret as stop
-                screenView.visibility = View.VISIBLE
-                screenView.setOnClickListener { clickPlay(view) }
+                mainBinding.screenView.visibility = View.VISIBLE
+                mainBinding.screenView.setOnClickListener { clickPlay(view) }
                 // change button to make clear ani is running and click will stop
-                playButton.setImageDrawable(ResourcesCompat
+                mainBinding.playButton.setImageDrawable(ResourcesCompat
                     .getDrawable(resources, android.R.drawable.ic_menu_close_clear_cancel, null))
                 // set frame in title to last frame
                 updateTitle(drawSession.filmStrip.size)
@@ -294,7 +300,7 @@ class MainActivity : AppCompatActivity() {
     // when menu item is clicked on
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // stop animation if it's running
-        if (drawSession.animationRunning) { clickPlay(playButton) }
+        if (drawSession.animationRunning) { clickPlay(mainBinding.playButton) }
       
         // if going into menu, we can can say they're done panning
         disablePan()
@@ -329,7 +335,7 @@ class MainActivity : AppCompatActivity() {
             try {
                 var copyToSave = drawSession.filmStrip
                 // always save to db in portrait
-                if (!drawingBoard.isPortrait) {
+                if (!mainBinding.drawingBoard.isPortrait) {
                     copyToSave = rotateFilmstrip(drawSession.filmStrip, false)
                 }
                 // new databaseFile
@@ -354,7 +360,7 @@ class MainActivity : AppCompatActivity() {
     private fun saveAsToDB() {
         var copyToSave = drawSession.filmStrip
         // always save to db in portrait
-        if (!drawingBoard.isPortrait) {
+        if (!mainBinding.drawingBoard.isPortrait) {
             copyToSave = rotateFilmstrip(drawSession.filmStrip, false)
         }
         val intent = Intent(this, FilesActivity::class.java)
@@ -379,7 +385,8 @@ class MainActivity : AppCompatActivity() {
      * or coming back from picking file location and name for gif export
      */
     override fun onActivityResult (requestCode: Int, resultCode: Int, data: Intent?) {
-        if ((requestCode == CODE_SAVE || requestCode == CODE_LOAD) && resultCode == Activity.RESULT_OK && data != null) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if ((requestCode == CODE_SAVE || requestCode == CODE_LOAD) && resultCode == RESULT_OK && data != null) {
             // if saved or loaded filmstrip from SQLite
             // unpack and send to drawSession
             val id = data.getIntExtra("id", 0)
@@ -391,7 +398,7 @@ class MainActivity : AppCompatActivity() {
                 drawSession.loadDataBaseFile(DatabaseFile(id, name, byteArray))
                 updateTitle(1)
             }
-        } else if (requestCode == CODE_FILE && resultCode == Activity.RESULT_OK) {
+        } else if (requestCode == CODE_FILE && resultCode == RESULT_OK) {
             // if saving gif to phone
             if (data != null && data.data != null) {
                 // get uri and send to AsyncTask to save in background
@@ -412,8 +419,7 @@ class MainActivity : AppCompatActivity() {
      * User selects Export Gif in menu
      * check:
      * - we have a name for the project
-     * - there are no issues wit the file system
-     * - we have required permissions
+     * - there are no issues with the file system
      * Then send them to pick file name/location
      */
     private fun exportGif() {
@@ -427,17 +433,6 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        // check/request permissions
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            != PackageManager.PERMISSION_GRANTED) {
-            // Permission is not granted
-            // request it and abort save
-            ActivityCompat.requestPermissions(this,
-                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                CODE_PERM)
-            return
-        }
-
         // use intent to let user pick save location
         val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
@@ -447,29 +442,6 @@ class MainActivity : AppCompatActivity() {
 
         startActivityForResult(intent, CODE_FILE)
         // see activity result for next step
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int,
-                                            permissions: Array<String>, grantResults: IntArray) {
-        when (requestCode) {
-            CODE_PERM -> {
-                // If request is cancelled, the result arrays are empty.
-                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-                    exportGif()
-                } else {
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                    breadBox.setMessage(getString(R.string.permission_required)).showFor(BreadBox.LONG)
-                }
-                return
-            }
-
-            else -> {
-                // Ignore all other requests.
-            }
-        }
     }
 
     /**
@@ -513,8 +485,8 @@ class MainActivity : AppCompatActivity() {
                         String.format(getString(R.string.processing_frame), i + 1, nFrames),
                         BreadBox.SHORT))
                     e.addFrame(Bitmap.createScaledBitmap(copyStrip[i],
-                        copyStrip[i].width * drawingBoard.xScale,
-                        copyStrip[i].height * drawingBoard.yScale, false))
+                        copyStrip[i].width * mainBinding.drawingBoard.xScale,
+                        copyStrip[i].height * mainBinding.drawingBoard.yScale, false))
                 }
                 e.finish()
                 gifByteArray = bos.toByteArray()
@@ -559,32 +531,35 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showHelp() {
-        helpDisplay.visibility = View.VISIBLE
+        mainBinding.helpDisplay.root.visibility = View.VISIBLE
         title = getString(R.string.app_name) + " - " + getString(R.string.help)
     }
 
     // Hide help screen when user is done with it, called with an onClick
     fun dismissHelp(view: View) {
-        helpDisplay.visibility = View.GONE
+        mainBinding.helpDisplay.root.visibility = View.GONE
         updateTitle()
     }
 
     private fun showAbout() {
-        aboutDisplay.visibility = View.VISIBLE
+        mainBinding.aboutDisplay.root.visibility = View.VISIBLE
         title = getString(R.string.app_name) + " - " + getString(R.string.about)
-        authorTextView.movementMethod = LinkMovementMethod.getInstance()
-        licenseTextView.movementMethod = LinkMovementMethod.getInstance()
+        aboutBinding.authorTextView.movementMethod = LinkMovementMethod.getInstance()
+        aboutBinding.licenseTextView.movementMethod = LinkMovementMethod.getInstance()
     }
 
     fun dismissAbout(view: View) {
-        aboutDisplay.visibility = View.GONE
+        mainBinding.aboutDisplay.root.visibility = View.GONE
         updateTitle()
     }
 
     // Toggle visibility of color library
     fun showColorLibraryClick(view: View) {
         disablePan()
-        colorLibraryView.visibility = if (colorLibraryView.visibility == View.GONE) View.VISIBLE else View.GONE
+        mainBinding.colorLibraryView.root.visibility =
+            if (mainBinding.colorLibraryView.root.visibility == View.GONE)
+                View.VISIBLE
+            else View.GONE
     }
 
     /**
@@ -593,10 +568,10 @@ class MainActivity : AppCompatActivity() {
      * set drawing color in DrawingBoard
      */
     fun libraryClick(view: View) {
-        colorLibraryView.visibility = View.GONE
+        mainBinding.colorLibraryView.root.visibility = View.GONE
         if (view is PaletteButton) {
             paletteManager.swapTo(view)
-            drawingBoard.color = view.colorVal
+            mainBinding.drawingBoard.color = view.colorVal
         }
     }
 
@@ -604,7 +579,7 @@ class MainActivity : AppCompatActivity() {
      * function to ensure pan mode is disabled (putting us back in drawing mode)
      */
     private fun disablePan() {
-        drawingBoard.panMode = false
-        panButton.colorFilter = null
+        mainBinding.drawingBoard.panMode = false
+        mainBinding.panButton.colorFilter = null
     }
 }

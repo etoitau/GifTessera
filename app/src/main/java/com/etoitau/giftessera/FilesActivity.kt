@@ -10,11 +10,11 @@ import android.view.View
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.etoitau.giftessera.databinding.ActivityFilesBinding
 import com.etoitau.giftessera.helpers.DBHelper
 import com.etoitau.giftessera.domain.DatabaseFile
 import com.etoitau.giftessera.helpers.EnterListener
 import com.etoitau.giftessera.helpers.FilesAdapter
-import kotlinx.android.synthetic.main.activity_files.*
 
 /**
  * Here user can see all current saved projects
@@ -35,11 +35,13 @@ class FilesActivity : AppCompatActivity() {
     private var name: String? = null
     // file data as ByteArray provided by intent from MainActivity if appropriate
     private var toSave: ByteArray? = null
+    private lateinit var binding: ActivityFilesBinding
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_files)
+        binding = ActivityFilesBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         // get mode from intent
         if (intent.extras == null) {
@@ -51,10 +53,10 @@ class FilesActivity : AppCompatActivity() {
 
         // if LOADING mode, don't need UI for new save, and title should update
         if (mode == FilesAdapter.LOADING) {
-            newSaveTitle.visibility = View.GONE
-            fileNameField.visibility = View.GONE
-            saveButton.visibility = View.GONE
-            pastSaveTitle.text = resources.getString(R.string.load_past_save)
+            binding.newSaveTitle.visibility = View.GONE
+            binding.fileNameField.visibility = View.GONE
+            binding.saveButton.visibility = View.GONE
+            binding.pastSaveTitle.text = resources.getString(R.string.load_past_save)
         } else {
             // if SAVING get file to save from intent
             toSave = intent.extras!!.getByteArray("file")
@@ -75,7 +77,7 @@ class FilesActivity : AppCompatActivity() {
 
         // set enter key listener on file name
         if (mode == FilesAdapter.SAVING) {
-            fileNameField.setOnKeyListener(EnterListener(this))
+            binding.fileNameField.setOnKeyListener(EnterListener(this))
         }
     }
 
@@ -86,27 +88,34 @@ class FilesActivity : AppCompatActivity() {
         val dbHelper = DBHelper(this, null)
         val cursor: Cursor? = dbHelper.getFiles()
         if (cursor == null) {
-            fileMessageView.text = resources.getString(R.string.no_files_found)
-            fileMessageView.visibility = View.VISIBLE
+            binding.fileMessageView.text = resources.getString(R.string.no_files_found)
+            binding.fileMessageView.visibility = View.VISIBLE
         } else {
             try {
                 // fill fileList with all files found in database
                 fileList.clear()
                 cursor.moveToFirst()
-                var id = cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_ID))
-                var name = cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_NAME))
-                var blob = cursor.getBlob(cursor.getColumnIndex(DBHelper.COLUMN_FILE))
+                val idIdx = cursor.getColumnIndex(DBHelper.COLUMN_ID)
+                val nameIdx = cursor.getColumnIndex(DBHelper.COLUMN_NAME)
+                val fileIdx = cursor.getColumnIndex(DBHelper.COLUMN_FILE)
+                if (idIdx == -1 || nameIdx == -1 || fileIdx == -1) {
+                    // Won't happen, this is to satisfy compiler
+                    throw Exception()
+                }
+                var id = cursor.getInt(idIdx)
+                var name = cursor.getString(nameIdx)
+                var blob = cursor.getBlob(fileIdx)
                 fileList.add(DatabaseFile(id, name, blob))
                 while (cursor.moveToNext()) {
-                    id = cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_ID))
-                    name = cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_NAME))
-                    blob = cursor.getBlob(cursor.getColumnIndex(DBHelper.COLUMN_FILE))
+                    id = cursor.getInt(idIdx)
+                    name = cursor.getString(nameIdx)
+                    blob = cursor.getBlob(fileIdx)
                     fileList.add(DatabaseFile(id, name, blob))
                 }
             } catch (e: CursorIndexOutOfBoundsException) {
                 if (fileList.isEmpty()) {
-                    fileMessageView.text = resources.getString(R.string.no_files_found)
-                    fileMessageView.visibility = View.VISIBLE
+                    binding.fileMessageView.text = resources.getString(R.string.no_files_found)
+                    binding.fileMessageView.visibility = View.VISIBLE
                 }
             } finally {
                 cursor.close()
@@ -130,13 +139,13 @@ class FilesActivity : AppCompatActivity() {
      * then save to database
      */
     fun clickSave(view: View) {
-        val enteredName: String? = fileNameField.text.toString()
-        if (enteredName == null || enteredName.isEmpty()) {
-            fileMessageView.text = resources.getString(R.string.missing_name)
-            fileMessageView.visibility = View.VISIBLE
+        val enteredName: String = binding.fileNameField.text.toString()
+        if (enteredName.isEmpty()) {
+            binding.fileMessageView.text = resources.getString(R.string.missing_name)
+            binding.fileMessageView.visibility = View.VISIBLE
         } else if (fileList.any {x -> x.name == enteredName }) {
-            fileMessageView.text = resources.getString(R.string.existing_name)
-            fileMessageView.visibility = View.VISIBLE
+            binding.fileMessageView.text = resources.getString(R.string.existing_name)
+            binding.fileMessageView.visibility = View.VISIBLE
         } else {
             newSaveToDB(enteredName, toSave!!)
         }
@@ -161,8 +170,8 @@ class FilesActivity : AppCompatActivity() {
         if (databaseFile.name == name) {
             // don't let user delete the current project,
             //   when they go back it would look like it's still there
-            fileMessageView.visibility = View.VISIBLE
-            fileMessageView.text = getString(R.string.file_in_use)
+            binding.fileMessageView.visibility = View.VISIBLE
+            binding.fileMessageView.text = getString(R.string.file_in_use)
             return
         }
         // delete save confirmation
@@ -201,7 +210,7 @@ class FilesActivity : AppCompatActivity() {
         builder.setMessage(message)
         builder.setPositiveButton(R.string.yes_save_over) { _, _ ->
             if (toSave == null) {
-                fileMessageView.text = getString(R.string.no_data)
+                binding.fileMessageView.text = getString(R.string.no_data)
             } else {
                 val newDBFile = DatabaseFile(databaseFile.id, databaseFile.name, toSave!!)
                 // use helper to update file in database
@@ -224,7 +233,7 @@ class FilesActivity : AppCompatActivity() {
     fun loadFileAlert(databaseFile: DatabaseFile) {
         val builder = android.app.AlertDialog.Builder(this)
         builder.setTitle(R.string.alert_load_save_title)
-        val message: String = String.format(resources.getString(R.string.alert_load_save_message, databaseFile.name))
+        val message: String = String.format(resources.getString(R.string.alert_load_save_message), databaseFile.name)
         builder.setMessage(message)
         builder.setPositiveButton(R.string.yes_load) { _, _ ->
             returnToMainWithIntent(databaseFile)

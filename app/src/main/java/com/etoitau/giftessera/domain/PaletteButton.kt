@@ -14,7 +14,7 @@ import com.etoitau.giftessera.R
  * Adds ability to show it selected and all others of same type unselected when touched
  * Also converts xml tag value to ColorVal object for programmatic use
  */
-class PaletteButton: ImageButton {
+class PaletteButton: androidx.appcompat.widget.AppCompatImageButton {
     constructor(context: Context): super(context)
     constructor(context: Context, attrs: AttributeSet): super(context, attrs)
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int): super(context, attrs, defStyleAttr)

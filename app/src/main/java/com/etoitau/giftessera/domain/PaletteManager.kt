@@ -1,12 +1,13 @@
 package com.etoitau.giftessera.domain
 
 import com.etoitau.giftessera.MainActivity
+import com.etoitau.giftessera.R
 import com.etoitau.giftessera.domain.ColorVal.*
 
 /**
  * Object for managing library of available palettes of colors
  */
-class PaletteManager constructor(mainActivity: MainActivity) {
+class PaletteManager() {
     // initialize sets of colors, each is a palette user can pick to draw with
     private val classicColors = listOf(RED, ORANGE, YELLOW, GREEN, BLUE, PURPLE, BLACK)
     private val pastelColors = listOf(MAUVELOUS, DESERT_SAND, COOKIES_CREAM, TURQUOISE_GREEN, BABY_BLUE, VODKA, GRAY219)
@@ -35,14 +36,20 @@ class PaletteManager constructor(mainActivity: MainActivity) {
     /**
      * On creation, find all the buttons and assign colors to them
      */
-    init {
+    fun initialize(mainActivity: MainActivity) {
         val r = mainActivity.resources
         // fill list of drawing buttons, these always show on bottom row
         // initialize to classic colors
         var idString = "paletteButton%d"
+
         for (i in 0 until 7) {
-            drawingPalette.add(mainActivity.findViewById(
-                r.getIdentifier(String.format(idString, i), "id", mainActivity.packageName)))
+            val idToFind = String.format(idString, i)
+            val buttonId = r.getIdentifier(idToFind, "id", mainActivity.packageName)
+            val paletteButton = mainActivity.findViewById<PaletteButton>(buttonId)
+            R.id.paletteButton0
+            drawingPalette.add(
+                paletteButton
+            )
             drawingPalette[i].colorVal = classicColors[i]
         }
 

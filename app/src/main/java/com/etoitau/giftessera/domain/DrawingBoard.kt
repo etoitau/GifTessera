@@ -104,10 +104,10 @@ class DrawingBoard @JvmOverloads constructor(context: Context, attrs: AttributeS
      * Render the source bitmap to the screen
      * adds some gridlines as a drawing aide
      */
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        canvas!!.save()
+        canvas.save()
 
         // draw each source pixel as a scaled up rectangle
         paint.style = Paint.Style.FILL_AND_STROKE
