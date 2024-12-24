@@ -1,0 +1,108 @@
+plugins {
+    id 'com.android.application'
+    id "org.jetbrains.kotlin.android" version "2.0.20"
+}
+
+/**
+ * Locate (and possibly download) a JDK used to build your kotlin
+ * source code. This also acts as a default for sourceCompatibility,
+ * targetCompatibility and jvmTarget. Note that this does not affect which JDK
+ * is used to run the Gradle build itself, and does not need to take into
+ * account the JDK version required by Gradle plugins (such as the
+ * Android Gradle Plugin)
+ */
+kotlin {
+    jvmToolchain 21
+}
+
+/**
+ * The android block is where you configure all your Android-specific
+ * build options.
+ */
+
+android {
+    /**
+     * The app's namespace. Used primarily to access app resources.
+     */
+
+    namespace "com.etoitau.giftessera"
+
+    /**
+     * compileSdk specifies the Android API level Gradle should use to
+     * compile your app. This means your app can use the API features included in
+     * this API level and lower.
+     */
+    compileSdk 34
+
+    /**
+     * The defaultConfig block encapsulates default settings and entries for all
+     * build variants and can override some attributes in main/AndroidManifest.xml
+     * dynamically from the build system. You can configure product flavors to override
+     * these values for different versions of your app.
+     */
+    defaultConfig {
+        applicationId "com.etoitau.giftessera"
+        minSdkVersion 21
+        targetSdkVersion 34
+        versionCode 6       // 6, 1.3.2, was last release 11/21/2019
+        versionName "1.3.2"
+//        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        /**
+         * By default, Android Studio configures the release build type to enable code
+         * shrinking, using minifyEnabled, and specifies the default ProGuard rules file.
+         */
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    buildFeatures {
+        buildConfig true
+        viewBinding true
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_21
+        targetCompatibility JavaVersion.VERSION_21
+    }
+    kotlinOptions {
+        jvmTarget = "21"
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "androidx.core:core-ktx:1.10.0" // Or latest version
+    implementation "androidx.appcompat:appcompat:1.7.0" // Or latest version
+    implementation "com.google.android.material:material:1.10.0" // Or latest version
+    implementation "androidx.constraintlayout:constraintlayout:2.1.4" // Or latest version
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.6.2" // Or latest version
+    implementation "androidx.activity:activity-compose:1.8.0" // Or latest version
+    implementation platform("androidx.compose:compose-bom:2023.03.00")
+    implementation "androidx.compose.ui:ui"
+    implementation "androidx.compose.ui:ui-graphics"
+    implementation "androidx.compose.ui:ui-tooling-preview"
+    implementation "androidx.compose.material3:material3"
+    testImplementation "junit:junit:4.13.2"
+    androidTestImplementation "androidx.test.ext:junit:1.1.5"
+    androidTestImplementation "androidx.test.espresso:espresso-core:3.5.1"
+    androidTestImplementation platform("androidx.compose:compose-bom:2023.03.00")
+    androidTestImplementation "androidx.compose.ui:ui-test-junit4"
+    debugImplementation "androidx.compose.ui:ui-tooling"
+    debugImplementation "androidx.compose.ui:ui-test-manifest"
+}
+
+// what I had before todo kyle
+//dependencies {
+//    implementation fileTree(dir: 'libs', include: ['*.jar'])
+//    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+//    implementation 'androidx.appcompat:appcompat:1.0.2'
+//    implementation 'androidx.core:core-ktx:1.0.2'
+//    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+//    testImplementation 'junit:junit:4.12'
+//    androidTestImplementation 'androidx.test:runner:1.1.1'
+//    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
+//    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+//    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+//}
