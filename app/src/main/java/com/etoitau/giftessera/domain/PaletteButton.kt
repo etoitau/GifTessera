@@ -2,7 +2,6 @@ package com.etoitau.giftessera.domain
 
 import android.content.Context
 import android.util.AttributeSet
-import android.widget.ImageButton
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.etoitau.giftessera.R
 
@@ -26,6 +25,8 @@ class PaletteButton: androidx.appcompat.widget.AppCompatImageButton {
             this.setColorFilter(value.value)
         }
 
+    private var isMarkedSelected = false
+
     // set all sibling PaletteButtons (and self) to unselected, then set self to selected
     fun setSelected() {
         val layout = this.parent
@@ -39,10 +40,16 @@ class PaletteButton: androidx.appcompat.widget.AppCompatImageButton {
         }
         // adds a black border instead of light gray
         this.setBackgroundResource(R.drawable.color_button_bg_select)
+        isMarkedSelected = true
     }
 
     // sets border to light gray (indicating unselected
     fun setUnselected() {
         this.setBackgroundResource(R.drawable.color_button_bg_unselect)
+        isMarkedSelected = false
+    }
+
+    fun isMarkedSelected(): Boolean {
+        return isMarkedSelected
     }
 }

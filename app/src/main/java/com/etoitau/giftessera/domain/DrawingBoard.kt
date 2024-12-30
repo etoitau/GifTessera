@@ -42,6 +42,7 @@ class DrawingBoard @JvmOverloads constructor(context: Context, attrs: AttributeS
 
     private var paint: Paint = Paint()              // paint object for drawing bitmap
     var color: ColorVal = BLACK             // current paint colorVal, start with black
+    var penSize: Int = 1                   // current pen size
 
     var startPanX: Int = 0                  // a pan operation needs to remember where the pan started
     var startPanY: Int = 0
@@ -204,7 +205,22 @@ class DrawingBoard @JvmOverloads constructor(context: Context, attrs: AttributeS
      * and paint that pixel with current paint colorVal
      */
     private fun paintSquare(x: Float, y: Float) {
-        srcBitmap.setPixel(toSrcX(x), toSrcY(y), color.value)
+        if (penSize == 1) {
+            srcBitmap.setPixel(toSrcX(x), toSrcY(y), color.value)
+            return
+        }
+        val penExtend = penSize / 2
+        val xCenter = toSrcX(x)
+        val yCenter = toSrcY(y)
+        val xMin = max(0, xCenter - penExtend)
+        val yMin = max(0, yCenter - penExtend)
+        val xMax = min(srcBitmap.width - 1, xCenter + penExtend)
+        val yMax = min(srcBitmap.height - 1, yCenter + penExtend)
+        for (xSquare in xMin..xMax) {
+            for (ySquare in yMin..yMax) {
+                srcBitmap.setPixel(xSquare, ySquare, color.value)
+            }
+        }
     }
 
     /**

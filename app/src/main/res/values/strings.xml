@@ -22,6 +22,7 @@
     <string name="color_library_button">Color Library Button</string>
     <string name="screen_description">transparent screen to catch click</string>
     <string name="pan_button">Pan Button</string>
+    <string name="pen_size_button">Pen Size Button</string>
 
 <!--    Color buttons-->
     <string name="white_button">White Button</string>

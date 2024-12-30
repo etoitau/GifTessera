@@ -13,6 +13,7 @@ import android.text.method.LinkMovementMethod
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.*
+import android.widget.Button
 import android.widget.ImageButton
 import androidx.core.content.res.ResourcesCompat
 import com.etoitau.giftessera.domain.*
@@ -43,6 +44,10 @@ class MainActivity : AppCompatActivity() {
         const val SAVE_ID = "id"
         const val SAVE_NAME = "name"
         const val SAVE_IS_PORTRAIT = "isPortrait"
+        const val SAVE_CUSTOM_PALETTE = "customPalette"
+        const val SAVE_DRAWING_PALETTE = "drawingPalette"
+        const val SAVE_SELECTED_COLOR = "selectedColor"
+        const val SAVE_PEN_SIZE = "penSize"
 
         // codes
         const val CODE_SAVE = 3
@@ -70,6 +75,10 @@ class MainActivity : AppCompatActivity() {
         var recoveredID: Int? = null
         var recoveredName: String? = null
         var wasPortrait = true
+        var savedCustomPalette: String? = null
+        var savedDrawingPalette: String? = null
+        var savedSelectedColor: Int? = null
+        var savedPenSize: Int? = null
 
         try {
             if (savedInstanceState != null) {
@@ -82,6 +91,10 @@ class MainActivity : AppCompatActivity() {
                     recoveredFilmstrip = toFilmstrip(savedStripString.toByteArray(StandardCharsets.ISO_8859_1))
                     recoveredFrame = recoveredFilmstrip[recoveredIndex]
                 }
+                savedCustomPalette = savedInstanceState.getString(SAVE_CUSTOM_PALETTE)
+                savedDrawingPalette = savedInstanceState.getString(SAVE_DRAWING_PALETTE)
+                savedSelectedColor = savedInstanceState.getInt(SAVE_SELECTED_COLOR)
+                savedPenSize = savedInstanceState.getInt(SAVE_PEN_SIZE)
             }
         } catch (e: Exception) {
             Log.i("onCreate","Error getting saved instance state")
@@ -123,6 +136,20 @@ class MainActivity : AppCompatActivity() {
                 this.updateTitle()
             }
 
+            if (savedPenSize != null) {
+                drawingBoard.penSize = savedPenSize
+                mainBinding.penSizeNumber.text = savedPenSize.toString()
+            }
+
+            if (savedCustomPalette != null) {
+                paletteManager.loadCustomPalette(savedCustomPalette)
+            }
+            if (savedDrawingPalette != null) {
+                paletteManager.loadDrawingPalette(savedDrawingPalette)
+            }
+            if (savedSelectedColor != null) {
+                drawingBoard.color = paletteManager.loadSelectedColorIndex(savedSelectedColor)
+            }
         })
 
         // add listener for peek button
@@ -149,6 +176,10 @@ class MainActivity : AppCompatActivity() {
                     putInt(SAVE_ID, drawSession.saveId!!)
                     putString(SAVE_NAME, drawSession.saveName)
                 }
+                putString(SAVE_CUSTOM_PALETTE, paletteManager.customPaletteString())
+                putString(SAVE_DRAWING_PALETTE, paletteManager.drawingPaletteString())
+                putInt(SAVE_SELECTED_COLOR, paletteManager.getSelectedColorIndex())
+                putInt(SAVE_PEN_SIZE, mainBinding.drawingBoard.penSize)
             }
         } catch (e: Exception) {
             Log.i("onSaveInstanceState", "saving save state failed")
@@ -195,6 +226,15 @@ class MainActivity : AppCompatActivity() {
         } else {
             disablePan()
         }
+    }
+
+    fun clickPenSize(view: View) {
+        if (view !is Button) {
+            return
+        }
+        val currentSize = view.text.toString().toInt()
+        mainBinding.drawingBoard.penSize = (currentSize + 2) % 10
+        view.text = mainBinding.drawingBoard.penSize.toString()
     }
 
     fun clickDelete(view: View) {
@@ -555,11 +595,12 @@ class MainActivity : AppCompatActivity() {
 
     // Toggle visibility of color library
     fun showColorLibraryClick(view: View) {
+        showColorLibrary(mainBinding.colorLibraryView.root.visibility == View.GONE)
+    }
+
+    fun showColorLibrary(show: Boolean) {
         disablePan()
-        mainBinding.colorLibraryView.root.visibility =
-            if (mainBinding.colorLibraryView.root.visibility == View.GONE)
-                View.VISIBLE
-            else View.GONE
+        mainBinding.colorLibraryView.root.visibility = if (show) View.VISIBLE else View.GONE
     }
 
     /**
@@ -568,9 +609,9 @@ class MainActivity : AppCompatActivity() {
      * set drawing color in DrawingBoard
      */
     fun libraryClick(view: View) {
-        mainBinding.colorLibraryView.root.visibility = View.GONE
+        showColorLibrary(false)
         if (view is PaletteButton) {
-            paletteManager.swapTo(view)
+            paletteManager.onLibraryClick(view)
             mainBinding.drawingBoard.color = view.colorVal
         }
     }

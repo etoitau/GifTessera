@@ -47,12 +47,24 @@
 
         <ImageButton
             android:id="@+id/panButton"
-            android:layout_height="match_parent"
             android:layout_width="55dp"
+            android:layout_height="match_parent"
             android:contentDescription="@string/pan_button"
             android:onClick="clickPan"
-            android:scaleType="fitXY"
+            android:scaleType="centerInside"
             app:srcCompat="@drawable/move" />
+
+        <Button
+            android:id="@+id/penSizeNumber"
+            android:layout_width="55dp"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/pen_size_button"
+            android:drawableLeft="@drawable/smaller_pen"
+            android:onClick="clickPenSize"
+            android:scaleType="centerInside"
+            android:text="1"
+            android:textAlignment="viewEnd"
+            android:textSize="12sp" />
 
         <Space
             android:layout_width="wrap_content"

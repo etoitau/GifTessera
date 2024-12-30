@@ -627,6 +627,115 @@
                 app:layout_constraintEnd_toEndOf="@+id/paletteButton0_6"
                 app:layout_constraintStart_toStartOf="@+id/paletteButton0_6"
                 app:layout_constraintTop_toTopOf="@+id/paletteButton5_0" />
+
+            <!-- Boundary between library and custom -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:background="#c0c0c0"
+                android:layout_marginBottom="0dp"
+                app:layout_constraintBottom_toTopOf="@+id/paletteButton5_0"
+                />
+
+            <!-- custom palette row -->
+            <com.etoitau.giftessera.domain.PaletteButton
+                android:id="@+id/paletteButtonC_0"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_marginBottom="4dp"
+                android:background="@drawable/color_button_bg_unselect"
+                android:onClick="libraryClick"
+                android:scaleType="fitXY"
+                android:src="@drawable/whitepix"
+                android:tag="C 0"
+                app:layout_constraintBottom_toTopOf="@+id/paletteButton5_0"
+                app:layout_constraintEnd_toEndOf="@+id/paletteButton0_0"
+                app:layout_constraintStart_toStartOf="@+id/paletteButton0_0" />
+
+            <com.etoitau.giftessera.domain.PaletteButton
+                android:id="@+id/paletteButtonC_1"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@drawable/color_button_bg_unselect"
+                android:onClick="libraryClick"
+                android:scaleType="fitXY"
+                android:src="@drawable/whitepix"
+                android:tag="C 1"
+                app:layout_constraintBottom_toBottomOf="@+id/paletteButtonC_0"
+                app:layout_constraintEnd_toEndOf="@+id/paletteButton0_1"
+                app:layout_constraintStart_toStartOf="@+id/paletteButton0_1"
+                app:layout_constraintTop_toTopOf="@+id/paletteButtonC_0" />
+
+            <com.etoitau.giftessera.domain.PaletteButton
+                android:id="@+id/paletteButtonC_2"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@drawable/color_button_bg_unselect"
+                android:onClick="libraryClick"
+                android:scaleType="fitXY"
+                android:src="@drawable/whitepix"
+                android:tag="C 2"
+                app:layout_constraintBottom_toBottomOf="@+id/paletteButtonC_0"
+                app:layout_constraintEnd_toEndOf="@+id/paletteButton0_2"
+                app:layout_constraintStart_toStartOf="@+id/paletteButton0_2"
+                app:layout_constraintTop_toTopOf="@+id/paletteButtonC_0" />
+
+            <com.etoitau.giftessera.domain.PaletteButton
+                android:id="@+id/paletteButtonC_3"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@drawable/color_button_bg_unselect"
+                android:onClick="libraryClick"
+                android:scaleType="fitXY"
+                android:src="@drawable/whitepix"
+                android:tag="C 3"
+                app:layout_constraintBottom_toBottomOf="@+id/paletteButtonC_0"
+                app:layout_constraintEnd_toEndOf="@+id/paletteButton0_3"
+                app:layout_constraintStart_toStartOf="@+id/paletteButton0_3"
+                app:layout_constraintTop_toTopOf="@+id/paletteButtonC_0" />
+
+            <com.etoitau.giftessera.domain.PaletteButton
+                android:id="@+id/paletteButtonC_4"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@drawable/color_button_bg_unselect"
+                android:onClick="libraryClick"
+                android:scaleType="fitXY"
+                android:src="@drawable/whitepix"
+                android:tag="C 4"
+                app:layout_constraintBottom_toBottomOf="@+id/paletteButtonC_0"
+                app:layout_constraintEnd_toEndOf="@+id/paletteButton0_4"
+                app:layout_constraintStart_toStartOf="@+id/paletteButton0_4"
+                app:layout_constraintTop_toTopOf="@+id/paletteButtonC_0" />
+
+            <com.etoitau.giftessera.domain.PaletteButton
+                android:id="@+id/paletteButtonC_5"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@drawable/color_button_bg_unselect"
+                android:onClick="libraryClick"
+                android:scaleType="fitXY"
+                android:src="@drawable/whitepix"
+                android:tag="C 5"
+                app:layout_constraintBottom_toBottomOf="@+id/paletteButtonC_0"
+                app:layout_constraintEnd_toEndOf="@+id/paletteButton0_5"
+                app:layout_constraintStart_toStartOf="@+id/paletteButton0_5"
+                app:layout_constraintTop_toTopOf="@+id/paletteButtonC_0" />
+
+            <com.etoitau.giftessera.domain.PaletteButton
+                android:id="@+id/paletteButtonC_6"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@drawable/color_button_bg_unselect"
+                android:onClick="libraryClick"
+                android:scaleType="fitXY"
+                android:src="@drawable/whitepix"
+                android:tag="C 6"
+                app:layout_constraintBottom_toBottomOf="@+id/paletteButtonC_0"
+                app:layout_constraintEnd_toEndOf="@+id/paletteButton0_6"
+                app:layout_constraintStart_toStartOf="@+id/paletteButton0_6"
+                app:layout_constraintTop_toTopOf="@+id/paletteButtonC_0" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </LinearLayout>
