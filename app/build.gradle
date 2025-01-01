@@ -44,8 +44,8 @@ android {
         applicationId "com.etoitau.giftessera"
         minSdkVersion 21
         targetSdkVersion 34
-        versionCode 7       // 7, 1.4.0, was last release 12/31/2024
-        versionName "1.4.0"
+        versionCode 8       // 7, 1.4.1, was last release 12/31/2024
+        versionName "1.4.1"
     }
     buildTypes {
         /**
