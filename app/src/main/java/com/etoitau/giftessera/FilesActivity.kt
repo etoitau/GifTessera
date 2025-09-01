@@ -13,8 +13,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.etoitau.giftessera.databinding.ActivityFilesBinding
 import com.etoitau.giftessera.helpers.DBHelper
 import com.etoitau.giftessera.domain.DatabaseFile
+import com.etoitau.giftessera.helpers.DBException
 import com.etoitau.giftessera.helpers.EnterListener
 import com.etoitau.giftessera.helpers.FilesAdapter
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 /**
  * Here user can see all current saved projects
@@ -81,46 +85,55 @@ class FilesActivity : AppCompatActivity() {
         }
     }
 
+    private fun dbToFileList(): MutableList<DatabaseFile> {
+        var foundFileList = mutableListOf<DatabaseFile>()
+        try {
+            val dbHelper = DBHelper(this, null)
+            foundFileList = dbHelper.dbToFileList()
+        } catch (e: DBException) {
+            binding.fileMessageView.text = resources.getString(R.string.no_files_found)
+            binding.fileMessageView.visibility = View.VISIBLE
+        }
+        return foundFileList
+    }
+
     /**
      * Retrieve all save files from database and store in list
      */
     private fun getFiles() {
-        val dbHelper = DBHelper(this, null)
-        val cursor: Cursor? = dbHelper.getFiles()
-        if (cursor == null) {
+        fileList.clear()
+        try {
+            val dbHelper = DBHelper(this, null)
+            fileList.addAll(dbHelper.dbToFileList())
+        } catch (e: DBException) {
             binding.fileMessageView.text = resources.getString(R.string.no_files_found)
             binding.fileMessageView.visibility = View.VISIBLE
-        } else {
-            try {
-                // fill fileList with all files found in database
-                fileList.clear()
-                cursor.moveToFirst()
-                val idIdx = cursor.getColumnIndex(DBHelper.COLUMN_ID)
-                val nameIdx = cursor.getColumnIndex(DBHelper.COLUMN_NAME)
-                val fileIdx = cursor.getColumnIndex(DBHelper.COLUMN_FILE)
-                if (idIdx == -1 || nameIdx == -1 || fileIdx == -1) {
-                    // Won't happen, this is to satisfy compiler
-                    throw Exception()
-                }
-                var id = cursor.getInt(idIdx)
-                var name = cursor.getString(nameIdx)
-                var blob = cursor.getBlob(fileIdx)
-                fileList.add(DatabaseFile(id, name, blob))
-                while (cursor.moveToNext()) {
-                    id = cursor.getInt(idIdx)
-                    name = cursor.getString(nameIdx)
-                    blob = cursor.getBlob(fileIdx)
-                    fileList.add(DatabaseFile(id, name, blob))
-                }
-            } catch (e: CursorIndexOutOfBoundsException) {
-                if (fileList.isEmpty()) {
-                    binding.fileMessageView.text = resources.getString(R.string.no_files_found)
-                    binding.fileMessageView.visibility = View.VISIBLE
-                }
-            } finally {
-                cursor.close()
-            }
+        }
+    }
 
+    fun updateDbFromString(string: String) {
+        getFiles()
+        val existingNameCount = HashMap<String, Int>()
+        val nameToBlob = HashMap<String, ByteArray>()
+        fileList.forEach {
+            existingNameCount[it.name] = 1
+            nameToBlob[it.name] = it.blob
+        }
+        val importedFileList = Json.decodeFromString<MutableList<DatabaseFile>>(string)
+        importedFileList.forEach {
+            var saveName: String = it.name
+            if (existingNameCount.containsKey(it.name)) {
+                if (it.blob.contentEquals(nameToBlob[it.name])) {
+                    // This is the same file, don't add it again
+                    return
+                }
+                saveName = saveName + " (" + existingNameCount[it.name] + ")"
+                existingNameCount[it.name] = existingNameCount[it.name]!! + 1
+            } else {
+                existingNameCount[it.name] = 1
+                nameToBlob[it.name] = it.blob
+            }
+            newSaveToDB(saveName, it.blob)
         }
     }
 

@@ -3,9 +3,15 @@ package com.etoitau.giftessera.helpers
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
+import android.database.CursorIndexOutOfBoundsException
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import android.view.View
+import com.etoitau.giftessera.R
 import com.etoitau.giftessera.domain.DatabaseFile
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 /**
  * SQLite Database Helper Class
@@ -79,4 +85,74 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?):
         db.update(TABLE_NAME, values, COLUMN_ID + "=${databaseFile.id}", null)
         db.close()
     }
+
+    fun dbToFileList(): MutableList<DatabaseFile> {
+        val cursor: Cursor? = getFiles()
+        val fileList = mutableListOf<DatabaseFile>()
+        if (cursor == null) {
+            throw DBException("No files found")
+        } else {
+            try {
+                // fill fileList with all files found in database
+                cursor.moveToFirst()
+                val idIdx = cursor.getColumnIndex(COLUMN_ID)
+                val nameIdx = cursor.getColumnIndex(COLUMN_NAME)
+                val fileIdx = cursor.getColumnIndex(COLUMN_FILE)
+                if (idIdx == -1 || nameIdx == -1 || fileIdx == -1) {
+                    // Won't happen, this is to satisfy compiler
+                    throw Exception()
+                }
+                var id = cursor.getInt(idIdx)
+                var name = cursor.getString(nameIdx)
+                var blob = cursor.getBlob(fileIdx)
+                fileList.add(DatabaseFile(id, name, blob))
+                while (cursor.moveToNext()) {
+                    id = cursor.getInt(idIdx)
+                    name = cursor.getString(nameIdx)
+                    blob = cursor.getBlob(fileIdx)
+                    fileList.add(DatabaseFile(id, name, blob))
+                }
+            } catch (e: CursorIndexOutOfBoundsException) {
+                if (fileList.isEmpty()) {
+                    throw DBException("No files found", e)
+                }
+            } finally {
+                cursor.close()
+            }
+        }
+        return fileList;
+    }
+
+    fun dbToString(): String {
+        val dbFileList = dbToFileList()
+        return Json.encodeToString(dbFileList)
+    }
+
+    fun updateDbFromString(string: String) {
+        val existingFileList = dbToFileList()
+        val existingNameCount = HashMap<String, Int>()
+        val nameToBlob = HashMap<String, ByteArray>()
+        existingFileList.forEach {
+            existingNameCount[it.name] = 1
+            nameToBlob[it.name] = it.blob
+        }
+        val importedFileList = Json.decodeFromString<MutableList<DatabaseFile>>(string)
+        importedFileList.forEach {
+            var saveName: String = it.name
+            if (existingNameCount.containsKey(it.name)) {
+                if (it.blob.contentEquals(nameToBlob[it.name])) {
+                    // This is the same file, don't add it again
+                    return@forEach
+                }
+                saveName = saveName + " (" + existingNameCount[it.name] + ")"
+                existingNameCount[it.name] = existingNameCount[it.name]!! + 1
+            } else {
+                existingNameCount[it.name] = 1
+                nameToBlob[it.name] = it.blob
+            }
+            addFile(DatabaseFile(null, saveName, it.blob))
+        }
+    }
 }
+
+class DBException(message: String? = null, cause: Throwable? = null) : Exception(message, cause) {}

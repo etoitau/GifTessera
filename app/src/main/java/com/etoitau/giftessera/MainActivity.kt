@@ -6,23 +6,42 @@ import android.graphics.Bitmap
 import android.graphics.PorterDuff
 import android.net.Uri
 import android.os.AsyncTask
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
 import android.text.method.LinkMovementMethod
 import android.util.DisplayMetrics
 import android.util.Log
-import android.view.*
+import android.view.Menu
+import android.view.MenuItem
+import android.view.MotionEvent
+import android.view.View
+import android.view.WindowManager
 import android.widget.Button
 import android.widget.ImageButton
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
-import com.etoitau.giftessera.domain.*
-import com.etoitau.giftessera.gifencoder.AnimatedGifEncoder
-import com.etoitau.giftessera.helpers.*
 import com.etoitau.giftessera.databinding.AboutDisplayBinding
 import com.etoitau.giftessera.databinding.ActivityMainBinding
+import com.etoitau.giftessera.domain.BreadBox
+import com.etoitau.giftessera.domain.ColorVal
+import com.etoitau.giftessera.domain.DatabaseFile
+import com.etoitau.giftessera.domain.DrawSession
+import com.etoitau.giftessera.domain.PaletteButton
+import com.etoitau.giftessera.domain.PaletteManager
+import com.etoitau.giftessera.gifencoder.AnimatedGifEncoder
+import com.etoitau.giftessera.helpers.DBHelper
+import com.etoitau.giftessera.helpers.FilesAdapter
+import com.etoitau.giftessera.helpers.rotateFilmstrip
+import com.etoitau.giftessera.helpers.toByte
+import com.etoitau.giftessera.helpers.toFilmstrip
+import java.io.BufferedReader
 import java.io.ByteArrayOutputStream
+import java.io.IOException
+import java.io.InputStreamReader
 import java.nio.charset.StandardCharsets
+import java.text.SimpleDateFormat
+import java.util.Date
+
 
 /**
  * Main Activity
@@ -53,6 +72,8 @@ class MainActivity : AppCompatActivity() {
         const val CODE_SAVE = 3
         const val CODE_LOAD = 5
         const val CODE_FILE = 7
+        const val CODE_EXPORT = 9
+        const val CODE_IMPORT = 11
     }
 
 
@@ -353,6 +374,8 @@ class MainActivity : AppCompatActivity() {
             R.id.menuSaveAs -> saveAsToDB()
             R.id.menuLoadGif -> loadFromDB()
             R.id.menuExportGif -> exportGif()
+            R.id.menuExportSaves -> exportSaves()
+            R.id.menuImportSaves -> importSaves()
             R.id.menuHelp -> showHelp()
             R.id.menuAbout -> showAbout()
             else -> {
@@ -421,8 +444,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Either coming back from FilesActivity having saved or loaded a project
-     * or coming back from picking file location and name for gif export
+     * Either coming back from FilesActivity having saved or loaded a project,
+     * or coming back from picking file location and name for gif export,
+     * or coming back from picking file location for db export
      */
     override fun onActivityResult (requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -446,6 +470,37 @@ class MainActivity : AppCompatActivity() {
                 // get and start AsyncTask
                 val writeGifFile = WriteGifFile()
                 writeGifFile.execute(uri)
+            }
+        } else if (requestCode == CODE_EXPORT && resultCode == RESULT_OK) {
+            if (data != null && data.data != null) {
+                val uri: Uri = data.data!!
+                try {
+                    val dbHelper = DBHelper(this, null)
+                    val outputStream = contentResolver.openOutputStream(uri)
+                    if (outputStream != null) {
+                        val textToSave = dbHelper.dbToString()
+                        outputStream.write(textToSave.toByteArray())
+                        outputStream.close()
+                        // File saved successfully
+                    }
+                } catch (e: IOException) {
+                    breadBox.setMessage(getString(R.string.db_export_error)).showFor(BreadBox.LONG)
+                }
+            }
+        } else if (requestCode == CODE_IMPORT && resultCode == RESULT_OK) {
+            if (data != null && data.data != null) {
+                val uri: Uri = data.data!!
+                try {
+                    contentResolver.openInputStream(uri).use { inputStream ->
+                        BufferedReader(InputStreamReader(inputStream)).use { reader ->
+                            val content = reader.readText()
+                            val dbHelper = DBHelper(this, null)
+                            dbHelper.updateDbFromString(content)
+                        }
+                    }
+                } catch (e: IOException) {
+                    breadBox.setMessage(getString(R.string.db_import_error)).showFor(BreadBox.LONG)
+                }
             }
         }
     }
@@ -482,6 +537,37 @@ class MainActivity : AppCompatActivity() {
 
         startActivityForResult(intent, CODE_FILE)
         // see activity result for next step
+    }
+
+    private fun exportSaves() {
+        if (!isReadyToSave()){
+            // check file system is available
+            breadBox.setMessage(getString(R.string.fs_not_available)).showFor(BreadBox.LONG)
+            return
+        }
+        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        // use intent to let user pick save location
+        val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TITLE, "export_$timeStamp.txt")
+        }
+
+        startActivityForResult(intent, CODE_EXPORT)
+        // see activity result for next step
+    }
+
+    private fun importSaves() {
+        if (!isReadyToSave()){
+            // check file system is available
+            breadBox.setMessage(getString(R.string.fs_not_available)).showFor(BreadBox.LONG)
+            return
+        }
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            type = "text/plain"
+        }
+        startActivityForResult(intent, CODE_IMPORT)
     }
 
     /**
