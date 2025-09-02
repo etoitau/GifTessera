@@ -34,8 +34,10 @@ import com.etoitau.giftessera.helpers.FilesAdapter
 import com.etoitau.giftessera.helpers.rotateFilmstrip
 import com.etoitau.giftessera.helpers.toByte
 import com.etoitau.giftessera.helpers.toFilmstrip
+import java.io.BufferedReader
 import java.io.ByteArrayOutputStream
 import java.io.IOException
+import java.io.InputStreamReader
 import java.nio.charset.StandardCharsets
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -71,6 +73,7 @@ class MainActivity : AppCompatActivity() {
         const val CODE_LOAD = 5
         const val CODE_FILE = 7
         const val CODE_EXPORT = 9
+        const val CODE_IMPORT = 11
     }
 
 
@@ -371,6 +374,8 @@ class MainActivity : AppCompatActivity() {
             R.id.menuSaveAs -> saveAsToDB()
             R.id.menuLoadGif -> loadFromDB()
             R.id.menuExportGif -> exportGif()
+            R.id.menuExportSaves -> exportSaves()
+            R.id.menuImportSaves -> importSaves()
             R.id.menuHelp -> showHelp()
             R.id.menuAbout -> showAbout()
             else -> {
@@ -470,15 +475,31 @@ class MainActivity : AppCompatActivity() {
             if (data != null && data.data != null) {
                 val uri: Uri = data.data!!
                 try {
+                    val dbHelper = DBHelper(this, null)
                     val outputStream = contentResolver.openOutputStream(uri)
                     if (outputStream != null) {
-                        val textToSave = dbToString()
+                        val textToSave = dbHelper.dbToString()
                         outputStream.write(textToSave.toByteArray())
                         outputStream.close()
                         // File saved successfully
                     }
                 } catch (e: IOException) {
-                    // Handle error
+                    breadBox.setMessage(getString(R.string.db_export_error)).showFor(BreadBox.LONG)
+                }
+            }
+        } else if (requestCode == CODE_IMPORT && resultCode == RESULT_OK) {
+            if (data != null && data.data != null) {
+                val uri: Uri = data.data!!
+                try {
+                    contentResolver.openInputStream(uri).use { inputStream ->
+                        BufferedReader(InputStreamReader(inputStream)).use { reader ->
+                            val content = reader.readText()
+                            val dbHelper = DBHelper(this, null)
+                            dbHelper.updateDbFromString(content)
+                        }
+                    }
+                } catch (e: IOException) {
+                    breadBox.setMessage(getString(R.string.db_import_error)).showFor(BreadBox.LONG)
                 }
             }
         }
@@ -533,8 +554,20 @@ class MainActivity : AppCompatActivity() {
         }
 
         startActivityForResult(intent, CODE_EXPORT)
-        // see activity result for next step todo kyle
+        // see activity result for next step
+    }
 
+    private fun importSaves() {
+        if (!isReadyToSave()){
+            // check file system is available
+            breadBox.setMessage(getString(R.string.fs_not_available)).showFor(BreadBox.LONG)
+            return
+        }
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            type = "text/plain"
+        }
+        startActivityForResult(intent, CODE_IMPORT)
     }
 
     /**

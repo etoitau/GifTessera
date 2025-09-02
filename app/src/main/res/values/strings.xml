@@ -53,6 +53,8 @@
     <string name="save_as">Save As</string>
     <string name="load">Load</string>
     <string name="export">Export Gif</string>
+    <string name="export_saves">Export Saves</string>
+    <string name="import_saves">Import Saves</string>
     <string name="invalid_selection">Invalid Selection</string>
 
 <!--    Misc-->
@@ -83,6 +85,8 @@
     <string name="error_saving_gif">Error saving %s to gif</string>
     <string name="error_loading">Error loading file</string>
     <string name="permission_required">Permission required to save gif</string>
+    <string name="db_export_error">Error exporting saves</string>
+    <string name="db_import_error">Error importing saves</string>
 
 <!--    Help text-->
     <string name="prev_help_entry">Move to previous frame.</string>

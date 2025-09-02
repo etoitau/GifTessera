@@ -6,6 +6,8 @@
     <item android:title="@string/save_as" android:id="@+id/menuSaveAs"></item>
     <item android:title="@string/load" android:id="@+id/menuLoadGif"></item>
     <item android:title="@string/export" android:id="@+id/menuExportGif"></item>
+    <item android:title="@string/export_saves" android:id="@+id/menuExportSaves"></item>
+    <item android:title="@string/import_saves" android:id="@+id/menuImportSaves"></item>
     <item android:title="@string/help" android:id="@+id/menuHelp"></item>
     <item android:title="@string/about" android:id="@+id/menuAbout"></item>
 </menu>
