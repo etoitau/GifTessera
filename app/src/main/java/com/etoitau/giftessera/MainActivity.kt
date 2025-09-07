@@ -1,6 +1,7 @@
 package com.etoitau.giftessera
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.PorterDuff
@@ -16,6 +17,8 @@ import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
@@ -182,6 +185,32 @@ class MainActivity : AppCompatActivity() {
         // create PaletteManager
         paletteManager = PaletteManager()
         paletteManager.initialize(this)
+
+        // add listener for jump to frame button
+        val jumpInput = mainBinding.jumpInput
+        jumpInput.setOnEditorActionListener { textView, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                // The user pressed "Done" on the keyboard
+                val textValue = textView.text.toString()
+                if (textValue.isEmpty()) {
+                    return@setOnEditorActionListener false
+                }
+                val inputValue = textValue.toIntOrNull()
+                if (inputValue == null) {
+                    breadBox.setMessage(resources.getString(R.string.invalid_number)).showFor(BreadBox.MEDIUM)
+                    return@setOnEditorActionListener false
+                }
+                jumpTo(inputValue - 1)
+                // clear input
+                jumpInput.text.clear()
+                // dismiss keyboard
+                val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.hideSoftInputFromWindow(textView.windowToken, 0)
+                true
+            } else {
+                false
+            }
+        }
     }
 
     /**
@@ -233,6 +262,11 @@ class MainActivity : AppCompatActivity() {
 
     fun clickPrev(view: View) {
         drawSession.getPrev()
+        updateTitle()
+    }
+
+    fun jumpTo(frameIndex: Int) {
+        drawSession.getFrame(frameIndex)
         updateTitle()
     }
 

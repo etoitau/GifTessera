@@ -58,20 +58,16 @@ class DrawSession constructor(private val mainActivity: MainActivity, private va
      * Scan forward in film strip
      */
     fun getNext() {
-        if (filmIndex < filmStrip.size - 1) {
-            filmIndex++
-            drawingBoard.setBitmap(filmStrip[filmIndex])
-        }
+        filmIndex = Math.floorMod(filmIndex + 1, filmStrip.size)
+        drawingBoard.setBitmap(filmStrip[filmIndex])
     }
 
     /**
      * scan backward in film strip
      */
     fun getPrev() {
-        if (filmIndex > 0) {
-            filmIndex--
-            drawingBoard.setBitmap(filmStrip[filmIndex])
-        }
+        filmIndex = Math.floorMod(filmIndex - 1, filmStrip.size)
+        drawingBoard.setBitmap(filmStrip[filmIndex])
     }
 
     fun getFrame(i: Int) {

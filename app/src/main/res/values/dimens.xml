@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="top_row_height">50dp</dimen>
+    <dimen name="top_row_button">50dp</dimen>
+</resources>

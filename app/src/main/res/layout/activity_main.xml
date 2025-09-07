@@ -11,23 +11,34 @@
     <LinearLayout
         android:id="@+id/topRow"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="@dimen/top_row_height"
         android:orientation="horizontal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
+
         <ImageButton
             android:id="@+id/prevButton"
             android:layout_height="match_parent"
-            android:layout_width="55dp"
+            android:layout_width="@dimen/top_row_button"
             android:contentDescription="@string/prev_frame_button"
             android:onClick="clickPrev"
             app:srcCompat="@android:drawable/ic_media_previous" />
 
+        <EditText
+            android:id="@+id/jumpInput"
+            android:layout_height="match_parent"
+            android:layout_width="@dimen/top_row_button"
+            android:contentDescription="@string/jump_input"
+            android:hint="@string/jump_hint"
+            android:gravity="center"
+            android:inputType="number"
+            android:imeOptions="actionDone" />
+
         <ImageButton
             android:id="@+id/nextButton"
             android:layout_height="match_parent"
-            android:layout_width="55dp"
+            android:layout_width="@dimen/top_row_button"
             android:contentDescription="@string/next_frame_button"
             android:onClick="clickNext"
             app:srcCompat="@android:drawable/ic_media_next" />
@@ -35,7 +46,7 @@
         <ImageButton
             android:id="@+id/playButton"
             android:layout_height="match_parent"
-            android:layout_width="55dp"
+            android:layout_width="@dimen/top_row_button"
             android:contentDescription="@string/play_button"
             android:onClick="clickPlay"
             app:srcCompat="@android:drawable/ic_media_play" />
@@ -47,8 +58,8 @@
 
         <ImageButton
             android:id="@+id/panButton"
-            android:layout_width="55dp"
             android:layout_height="match_parent"
+            android:layout_width="@dimen/top_row_button"
             android:contentDescription="@string/pan_button"
             android:onClick="clickPan"
             android:scaleType="centerInside"
@@ -56,8 +67,8 @@
 
         <Button
             android:id="@+id/penSizeNumber"
-            android:layout_width="55dp"
             android:layout_height="match_parent"
+            android:layout_width="@dimen/top_row_button"
             android:contentDescription="@string/pen_size_button"
             android:drawableLeft="@drawable/smaller_pen"
             android:onClick="clickPenSize"
@@ -74,7 +85,7 @@
         <ImageButton
             android:id="@+id/deleteButton"
             android:layout_height="match_parent"
-            android:layout_width="55dp"
+            android:layout_width="@dimen/top_row_button"
             android:contentDescription="@string/del_frame_button"
             android:onClick="clickDelete"
             app:srcCompat="@android:drawable/ic_delete" />
@@ -82,7 +93,7 @@
         <ImageButton
             android:id="@+id/addButton"
             android:layout_height="match_parent"
-            android:layout_width="55dp"
+            android:layout_width="@dimen/top_row_button"
             android:contentDescription="@string/add_frame_button"
             android:onClick="clickAdd"
             app:srcCompat="@android:drawable/ic_input_add" />

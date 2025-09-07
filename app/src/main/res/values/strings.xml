@@ -10,6 +10,8 @@
     <string name="next_frame_button">Next Frame Button</string>
     <string name="prev_frame_button">Previous Frame Button</string>
     <string name="play_button">Play Button</string>
+    <string name="jump_input">Jump Input</string>
+    <string name="jump_hint">#</string>
     <string name="add_frame_button">Add or Insert Frame Button</string>
     <string name="del_frame_button">Delete Frame Button</string>
     <string name="dwg_palette_6">Drawing Palette 6</string>
@@ -87,6 +89,7 @@
     <string name="permission_required">Permission required to save gif</string>
     <string name="db_export_error">Error exporting saves</string>
     <string name="db_import_error">Error importing saves</string>
+    <string name="invalid_number">Invalid number</string>
 
 <!--    Help text-->
     <string name="prev_help_entry">Move to previous frame.</string>
